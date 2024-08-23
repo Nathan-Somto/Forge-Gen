@@ -5,14 +5,15 @@ import Button from "@/components/Button";
 import Colors from "@/constants/Colors";
 import { router, useLocalSearchParams } from "expo-router";
 import { dummyData } from "@/components/GeneratedImage/dummyData";
+import { GeneratedImageProps } from "@/components/GeneratedImage";
 
 export default function ImageDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [data, setData] = React.useState<(typeof dummyData)[number] | null>(
+  const [data, setData] = React.useState<GeneratedImageProps | null>(
     null
   );
   React.useEffect(() => {
-    const foundData = dummyData.find((item) => item.id === id);
+    const foundData = dummyData.flat(1).find((item) => item.id === id);
     if (foundData === undefined) {
       router.back();
     } else {

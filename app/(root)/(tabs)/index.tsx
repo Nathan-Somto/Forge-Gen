@@ -5,15 +5,31 @@ import Feather from "@expo/vector-icons/Feather";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
-import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { Text, View } from "react-native";
 import { dummyData } from "@/components/GeneratedImage/dummyData";
-import GeneratedImage from "@/components/GeneratedImage";
+import GeneratedImage, {
+  GeneratedImageProps,
+} from "@/components/GeneratedImage";
+import Row from "@/components/Row";
+import React from "react";
+import { convertToRowValue } from "@/utils";
 
 export default function HomeScreen() {
+  const [generations, setGenerations] = React.useState<GeneratedImageProps[][]>(
+    []
+  );
+  React.useEffect(() => {
+    setGenerations(convertToRowValue(dummyData));
+  }, []);
   return (
     <PrimaryBackground>
-      <View className="px-5  overflow-scroll">
+      <View className="px-5">
         <Link href="/(tabs)/generate" asChild>
           <TouchableOpacity className="w-full mx-auto items-center">
             <LinearGradient
@@ -32,46 +48,46 @@ export default function HomeScreen() {
             </LinearGradient>
           </TouchableOpacity>
         </Link>
-        <View className="mt-12">
-          {dummyData.length === 0 ? (
-            <View className="h-[70%] justify-center items-center opacity-50">
-              <Feather
-                name="camera-off"
-                size={100}
-                color={Colors.neutral}
-                className="opacity-50"
-              />
-              <Text
-                className="text-lg mt-3 text-center"
-                style={{ color: Colors.neutral }}
-              >
-                No Images Generated
-              </Text>
-            </View>
-          ) : (
-            <>
-              <Text
-                style={{ color: Colors.text }}
-                className="text-lg mb-4 font-medium text-left uppercase leading-[30px]"
-              >
-                My Generations
-              </Text>
-              <FlatList
-                data={dummyData}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <GeneratedImage
-                    {...item}
-                  />
-                )}
-                scrollEnabled
-                showsVerticalScrollIndicator
-                numColumns={2}
-              />
-              <View className="h-[100px]"/>
-            </>
-          )}
-        </View>
+      </View>
+      <View className="mt-12 px-5">
+        {generations.length === 0 ? (
+          <View className="h-[70%] justify-center items-center opacity-50">
+            <Feather
+              name="camera-off"
+              size={100}
+              color={Colors.neutral}
+              className="opacity-50"
+            />
+            <Text
+              className="text-lg mt-3 text-center"
+              style={{ color: Colors.neutral }}
+            >
+              No Images Generated
+            </Text>
+          </View>
+        ) : (
+          <>
+            <Text
+              style={{ color: Colors.text }}
+              className="text-lg mb-4 font-medium text-left uppercase leading-[30px]"
+            >
+              My Generations
+            </Text>
+            <FlatList
+              data={generations}
+              renderItem={({ item, index }) => (
+                <Row
+                  key={index}
+                  data={item}
+                  keyExtractor={(item) => item.id}
+                  Component={GeneratedImage}
+                />
+              )}
+              scrollEnabled
+              showsVerticalScrollIndicator
+            />
+          </>
+        )}
       </View>
     </PrimaryBackground>
   );

@@ -4,7 +4,7 @@ import { FontAwesome, Feather } from "@expo/vector-icons";
 import Button from "../Button";
 import Colors from "@/constants/Colors";
 import { Link, router } from "expo-router";
-type props = {
+export type GeneratedImageProps = {
   imageUrl: string | number;
   prompt: string;
   isOwner: boolean;
@@ -13,7 +13,7 @@ type props = {
   ownerId: string;
   imageStyle: string;
 };
-export default function GeneratedImage({id, imageUrl, prompt, isOwner, imageStyle }: props) {
+export default function GeneratedImage({id, imageUrl, prompt, isOwner, imageStyle }: GeneratedImageProps) {
   const [favourite, setFavourite] = React.useState(false);
   return ( 
     <View className="flex-[0.5] h-[200px] my-2.5 mx-1.5 ">
