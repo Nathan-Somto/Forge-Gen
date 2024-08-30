@@ -7,7 +7,7 @@ export default function PrimaryBackground({children}: PropsWithChildren) {
     <LinearGradient
     colors={Colors.backgroundGradient}
     locations={[0, 0.5]}
-    className='flex-1 '
+    className='flex-1'
     >
         {children}
     </LinearGradient>

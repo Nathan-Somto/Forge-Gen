@@ -5,3 +5,7 @@ export function convertToRowValue<T>(value: T[], columns = 2): T[][] {
   }
   return final;
 }
+
+export const returnUri = (imageSrc: string | number) => {
+  return typeof imageSrc === "string" ? { uri: imageSrc } : imageSrc;
+};

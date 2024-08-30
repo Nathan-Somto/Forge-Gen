@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import Button from "../Button";
+import Button from "../ui/Button";
 type Props = {
   onPress: () => void;
   show?: boolean;
 };
-export default function DoneButton({ onPress, show=false }: Props) {
+export default function DoneButton({ onPress, show = false }: Props) {
   return (
     <>
       {show ? (

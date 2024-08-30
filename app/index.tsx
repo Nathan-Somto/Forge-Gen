@@ -5,8 +5,9 @@ import { Link } from 'expo-router'
 export default function index() {
   return (
     <View>
-      <Text>first screen</Text>
+      <Text>First Screen</Text>
       <Link href='/(auth)/welcome'>Welcome Screen</Link>
+      <Link href='/(root)/(tabs)/'> Home Screen</Link>
     </View>
   )
 }

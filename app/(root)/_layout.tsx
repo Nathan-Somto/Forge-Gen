@@ -1,4 +1,5 @@
 import Colors from "@/constants/Colors";
+import Typo from "@/constants/Typo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Link, router, Stack } from "expo-router";
 import React from "react";
@@ -10,7 +11,8 @@ export default function RootLayout() {
       screenOptions={{
         headerTitleStyle: {
           color: Colors.text,
-          fontSize: 22
+          fontSize: 22,
+          fontFamily: Typo.medium
          },
          headerTitleAlign : 'center',
         headerStyle: {
@@ -29,10 +31,7 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="settings"  />
-      <Stack.Screen name="image/[id]"  options={{headerShown: false}}/>
-      <Stack.Screen name="imageStyle" options={{headerTitle: "Image Style"}} />
-      <Stack.Screen name="canvasStyle" options={{headerTitle: "Canvas Size"}} />
+      <Stack.Screen name="settings" options={{ headerShown: false }}  />
     </Stack>
   );
 }

@@ -1,94 +1,142 @@
-import Button from "@/components/Button";
 import PrimaryBackground from "@/components/PrimaryBackground";
 import Colors from "@/constants/Colors";
-import Feather from "@expo/vector-icons/Feather";
-import { FontAwesome } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   FlatList,
-  ScrollView,
-  StyleSheet,
+  Keyboard,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { Text, View } from "react-native";
-import { dummyData } from "@/components/GeneratedImage/dummyData";
-import GeneratedImage, {
-  GeneratedImageProps,
-} from "@/components/GeneratedImage";
-import Row from "@/components/Row";
+import { View } from "react-native";
+import { Text } from "@/components/ui/Text";
+import { dummyData } from "@/components/ImageCard/dummyData";
 import React from "react";
-import { convertToRowValue } from "@/utils";
+import GradientHeading from "@/components/GradientHeading";
+import { SearchBox } from "@/components/SearchBox";
+import { transformationLinks } from "@/constants/Values";
+import Collection from "@/components/Collection";
+import ImageCard from "@/components/ImageCard";
 
 export default function HomeScreen() {
-  const [generations, setGenerations] = React.useState<GeneratedImageProps[][]>(
-    []
-  );
-  React.useEffect(() => {
-    setGenerations(convertToRowValue(dummyData));
-  }, []);
+  const TabsRef = React.useRef<FlatList | null>(null);
+  const [generations, setGenerations] = React.useState(dummyData);
+  const pageSize = 5;
+  const totalPages = Math.ceil(generations.length / pageSize);
+  const [page, setPage] = React.useState(1);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [transformationType, setTransformationTpe] = React.useState("All");
+  const handleFilter = (text: string) => {
+    setSearchValue(text);
+    if (text === "") {
+      setGenerations(dummyData);
+      return;
+    }
+    const filteredData = dummyData.filter((item) =>
+      item.title.toLowerCase().includes(text.toLowerCase())
+    );
+    setGenerations(filteredData);
+  };
+  const handleTransformFilter = (text: string, index: number) => {
+    if (text === "All") {
+      setGenerations(dummyData);
+      setTransformationTpe(text);
+      return;
+    }
+    const filteredData = dummyData.filter(
+      (item) => item.transformationType === text
+    );
+    setGenerations(filteredData);
+    setTransformationTpe(text);
+    TabsRef.current?.scrollToIndex({ index, animated: true });
+  };
+  const fetchNextPage = () => {
+    setPage((prev) => prev + 1);
+  };
   return (
     <PrimaryBackground>
-      <View className="px-5">
-        <Link href="/(tabs)/generate" asChild>
-          <TouchableOpacity className="w-full mx-auto items-center">
-            <LinearGradient
-              colors={Colors.multiColorGradient}
-              className="h-[150px] w-full mt-5 justify-center items-center  flex-row rounded-[16px]  px-6"
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-            >
-              <FontAwesome name="magic" size={25} color={Colors.text} />
-              <Text
-                className="text-xl font-semibold ml-2.5"
-                style={{ color: Colors.text }}
-              >
-                Generate Image
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </Link>
-      </View>
-      <View className="mt-12 px-5">
-        {generations.length === 0 ? (
-          <View className="h-[70%] justify-center items-center opacity-50">
-            <Feather
-              name="camera-off"
-              size={100}
-              color={Colors.neutral}
-              className="opacity-50"
-            />
-            <Text
-              className="text-lg mt-3 text-center"
-              style={{ color: Colors.neutral }}
-            >
-              No Images Generated
-            </Text>
+      <TouchableWithoutFeedback
+        className="flex-1"
+        onPress={() => Keyboard.dismiss()}
+      >
+        <>
+          <View className="px-3 my-5">
+            <GradientHeading size={28}>Recent Transformations</GradientHeading>
+            <View className="mb-1.5" />
+            <GradientHeading size={28}>by people</GradientHeading>
           </View>
-        ) : (
-          <>
-            <Text
-              style={{ color: Colors.text }}
-              className="text-lg mb-4 font-medium text-left uppercase leading-[30px]"
-            >
-              My Generations
-            </Text>
+          <View className="my-3.5 px-3">
+            <SearchBox value={searchValue} handleFilter={handleFilter} />
+          </View>
+          <View className="my-5 px-3">
             <FlatList
-              data={generations}
+              ref={TabsRef}
+              data={[
+                { label: "All", type: "All" },
+                ...transformationLinks.map((item) => ({
+                  label: item.label,
+                  type: item.type,
+                })),
+              ]}
+              keyExtractor={(item) => item.label}
+              horizontal
               renderItem={({ item, index }) => (
-                <Row
-                  key={index}
-                  data={item}
-                  keyExtractor={(item) => item.id}
-                  Component={GeneratedImage}
-                />
+                <TouchableOpacity
+                  className="mx-2 rounded-3xl transition-all ease-in py-2 px-4"
+                  style={{
+                    backgroundColor:
+                      item.type === transformationType
+                        ? Colors.btnPrimary
+                        : "transparent",
+                  }}
+                  onPress={() =>
+                    handleTransformFilter(item.type ?? "All", index)
+                  }
+                >
+                  <Text
+                    style={{
+                      color:
+                        item.type === transformationType
+                          ? Colors.text
+                          : Colors.neutral,
+                    }}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
               )}
-              scrollEnabled
-              showsVerticalScrollIndicator
+              showsHorizontalScrollIndicator={false}
             />
-          </>
-        )}
-      </View>
+          </View>
+          <View className="mt-2 px-3 flex-1">
+            {generations.length === 0 ? (
+              <View className="h-[70%] justify-center items-center opacity-50">
+                <MaterialCommunityIcons
+                  name="image-off"
+                  size={100}
+                  color={Colors.neutral}
+                  className="opacity-50"
+                />
+                <Text
+                  className="text-lg mt-3 text-center"
+                  style={{ color: Colors.neutral }}
+                >
+                  No Transformations Yet
+                </Text>
+              </View>
+            ) : (
+              <Collection
+                El={ImageCard}
+                data={generations}
+                page={page}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                fetchNextPage={fetchNextPage}
+                getPrevPage={() => setPage((prev) => prev - 1)}
+              />
+            )}
+          </View>
+        </>
+      </TouchableWithoutFeedback>
     </PrimaryBackground>
   );
 }
