@@ -78,8 +78,8 @@ export const transformationLinks: TransformationLinks = [
 
 export  const aspectRatios = [
   { label: 'Square (1:1)', value: '1:1' },
-  { label: 'Standard Potrait (16:9)', value: '16:9' },
-  { label: 'Phone Potrait (9:16)', value: '19: 16' },
+  { label: 'Standard Potrait (4:3)', value: '4:3' },
+  { label: 'Phone Potrait (16:9)', value: '16:9' },
 ];
 export const transformationFormInfo: TransformationFormInfo = {
   fill: {

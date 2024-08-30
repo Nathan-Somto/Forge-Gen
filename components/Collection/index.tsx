@@ -36,7 +36,7 @@ export default function Collection<T>({
         data={data.slice(pageSize * (page - 1), pageSize * page)}
         renderItem={({ item }) => <El {...item} />}
         keyExtractor={(item) => item.id}
-        className="w-full my-5"
+        className="w-full mb-5"
         ListFooterComponent={() => (
           <View className="flex-row items-center mx-auto">
             <Button disabled={page === 1} onPress={getPrevPage} containerClassName={`${page === 1 && 'opacity-50'} w-[40px] px-2`}>

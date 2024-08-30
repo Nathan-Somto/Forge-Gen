@@ -107,7 +107,7 @@ export default function HomeScreen() {
               showsHorizontalScrollIndicator={false}
             />
           </View>
-          <View className="mt-2 px-3 flex-1">
+          <View className="px-3 flex-1">
             {generations.length === 0 ? (
               <View className="h-[70%] justify-center items-center opacity-50">
                 <MaterialCommunityIcons
