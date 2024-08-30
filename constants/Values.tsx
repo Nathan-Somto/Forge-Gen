@@ -1,6 +1,8 @@
 import { Entypo, Feather } from "@expo/vector-icons";
 import Colors from "./Colors";
 import Svg, { Path } from "react-native-svg";
+import Coins from "@/assets/images/profile/coins.png";
+import Transformations from "@/assets/images/profile/transformations.png";
 const CONSTANT_SIZE = 50;
 const COLOR = Colors.neutral;
 export const transformationLinks: TransformationLinks = [
@@ -197,3 +199,19 @@ export const iconBtns: IconBtns[] = [
     LikedIcon: (props: IconProps) => <Entypo name="heart" {...props} />,
   },
 ];
+export const profileCards = (balance: number, transformations: number) =>  (
+  [
+    {
+      title: "Credits Available",
+      value: balance,
+      image: Coins,
+      id: "1234"
+    },
+    {
+      title: "Transformations",
+      value: transformations,
+      image: Transformations,
+      id: "5678"
+    }
+  ]
+)

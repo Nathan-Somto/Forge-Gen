@@ -1,5 +1,5 @@
 import React from "react";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { Modal, TouchableOpacity, View, PanResponder } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { Entypo, Feather } from "@expo/vector-icons";
@@ -42,54 +42,84 @@ export function useImagePicker({ optionTitle }: { optionTitle: string }) {
     setDisplayOptions(true);
   };
 
-  const panResponder = React.useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 50) {
-          setDisplayOptions(false);
-        }
-      },
-    })
-  ).current;
-
   const Options = () => {
+    const panResponder = React.useRef(
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderMove: (_, gestureState) => {
+          if (gestureState.dy > 50) {
+            setDisplayOptions(false);
+          }
+        },
+      })
+    ).current;
     return (
-      <Modal transparent visible={displayOptions} animationType="slide">
-        <View className="flex-1 justify-end">
-          <TouchableOpacity
-            className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-50"
-            onPress={() => setDisplayOptions(false)}
-          />
+      <Modal transparent visible={displayOptions} animationType="fade">
+        <TouchableOpacity
+          className="flex-1  bg-black relative"
+          onPress={() => setDisplayOptions(false)}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+            flex: 1,
+            position: "relative",
+          }}
+        >
           <View
             {...panResponder.panHandlers}
-            className="bg-white w-full h-[30%] rounded-t-[12px] px-6 py-4 items-center"
+            style={{
+              backgroundColor: Colors.text,
+              bottom: 0,
+              position: "absolute",
+              zIndex: 5,
+              width: "100%",
+              height: "30%",
+              paddingHorizontal: 12,
+              borderTopEndRadius: 12,
+              paddingVertical: 16,
+              alignItems: "center",
+            }}
           >
             <TouchableOpacity
               className="absolute top-2 right-2"
+              style={{position: "absolute", top: 10, right: 10}}
               onPress={() => setDisplayOptions(false)}
             >
-              <Feather name="x" size={24} color={Colors.primary} />
+              <Feather name="x" size={20} color={Colors.secondary} />
             </TouchableOpacity>
-            <Text className="text-lg font-bold mb-4">{optionTitle}</Text>
-            <View className="flex-row justify-between w-full px-4">
+            <Text h2 style={{ color: "#000", marginVertical: 16 }}>
+              {optionTitle}
+            </Text>
+            <View
+              style={{
+                justifyContent: "space-between",
+                width: "100%",
+                paddingHorizontal: 16,
+                flexDirection: "row",
+                alignItems: "center",
+                height: "60%"
+              }}
+            >
               <TouchableOpacity
-                className="items-center"
+                style={{alignItems: "center"}}
                 onPress={handleImagePick}
               >
-                <Entypo name="images" size={30} color={Colors.primary} />
-                <Text className="mt-2">Choose from gallery</Text>
+                <Entypo name="images" size={35} color={Colors.btnPrimary} />
+                <Text sm style={{ marginTop: 8, color: "rgba(0,0,0,0.7)", textAlign: "center" }}>
+                  Choose from gallery
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="items-center"
+                style={{alignItems: "center"}}
                 onPress={handlePhotoTake}
               >
-                <Feather name="camera" size={30} color={Colors.primary} />
-                <Text className="mt-2">Take a photo</Text>
+                <Feather name="camera" size={35} color={Colors.btnPrimary} />
+                <Text sm style={{ marginTop: 8, color: "rgba(0,0,0,0.7)", textAlign: "center" }}>
+                  Take a photo
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     );
   };
