@@ -5,4 +5,6 @@ export {
   genRecolor,
   genRemove,
   imgRestore,
+  type SuccessResponse,
+  type ErrorResponse,
 } from "./cloudinary";
