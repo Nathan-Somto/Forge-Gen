@@ -10,30 +10,27 @@ import {
 import { Text } from "./Text";
 import Colors from "@/constants/Colors";
 import Typo from "@/constants/Typo";
-export interface Data {
+
+interface Props<T> {
   label: string;
-  value: string;
+  data: DropdownData<T>;
+  onSelect: (item: DropdownData<T>[number]) => void;
 }
-interface Props {
-  label: string;
-  data: Data[];
-  onSelect: (item: Data) => void;
+interface RenderItemProps<T> {
+  item: DropdownData<T>[number];
 }
-interface RenderItemProps {
-  item: Data;
-}
-export const Dropdown: FC<Props> = ({ label, data, onSelect }) => {
+export function Dropdown<T>({ label, data, onSelect }: Props<T>) {
   const DropdownButtonRef =
     React.useRef<TouchableOpacity | null>(null);
   const [dropdownTop, setDropdownTop] = React.useState(0);
   const [visible, setVisible] = React.useState(false);
-  const [selected, setSelected] = React.useState<Data | undefined>();
-  const onItemPress = (item: Data) => {
+  const [selected, setSelected] = React.useState<DropdownData<T>[number] | undefined>();
+  const onItemPress = (item: DropdownData<T>[number]) => {
     setSelected(item);
     onSelect(item);
     setVisible(false);
   };
-  const renderItem = ({ item }: RenderItemProps) => (
+  const renderItem = ({ item }: RenderItemProps<T>) => (
     <TouchableOpacity
       className="p-2.5 border-b border-b-black/50"
       onPress={() => onItemPress(item)}
@@ -43,7 +40,6 @@ export const Dropdown: FC<Props> = ({ label, data, onSelect }) => {
   );
   const openDropdown = () => {
     if (!DropdownButtonRef.current) return;
-    /*  DropdownButtonRef.current */
     DropdownButtonRef.current.measure((_fx, _fy, w, h, px, py) => {
       setDropdownTop(py + h);
     });
