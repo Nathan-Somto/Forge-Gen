@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList,
+  Alert,
 } from "react-native";
 import React from "react";
 import PrimaryBackground from "@/components/PrimaryBackground";
@@ -14,14 +15,28 @@ import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import { SettingsLinks } from "@/constants/Values";
 import RateUsModal from "@/components/RateUsModal";
-
+import { useAuth } from "@/hooks/useAuth";
+import { logout as deleteSession } from "@/lib/appwrite";
 export default function Settings() {
+  const [disabled, setDisabled] = React.useState(false);
+  const { logout } = useAuth();
   const [showModal, setShowModal] = React.useState(false);
   const openModal = (val: boolean) => {
     setShowModal(val);
   };
-  const signOut = () => {};
-  const handleClick = (id: number) => {
+  const signOut = async () => {
+    setDisabled(true);
+    try {
+      await deleteSession();
+      logout();
+      router.replace("/(auth)/sign-in");
+    } catch (err) {
+      Alert.alert("Error Occured", (err as Error).message);
+    } finally {
+      setDisabled(false);
+    }
+  };
+  const handleClick = async (id: number) => {
     switch (id) {
       case 1:
         openModal(true);
@@ -30,10 +45,13 @@ export default function Settings() {
         router.push("/(root)/settings/about");
         return;
       case 3:
-        router.push("/(root)/settings/buy-credits");
+        router.push("/(root)/settings/payment-history");
         return;
       case 4:
-        signOut();
+        router.push("/(root)/settings/buy-credits");
+        return;
+      case 5:
+        await signOut();
         return;
       default:
         return;
@@ -68,15 +86,20 @@ export default function Settings() {
         <View className="mt-5" />
         <FlatList
           data={SettingsLinks}
-          renderItem={({ item: { Icon, text, id } }) => (
+          renderItem={({ item: { Icon, text, id, color } }) => (
             <TouchableOpacity
+              disabled={disabled}
               onPress={() => handleClick(id)}
-              className="flex-row gap-x-3 my-4 px-4 items-center"
+              className={`flex-row gap-x-3 my-4 px-4 items-center ${
+                disabled ? "opacity-50" : ""
+              }`}
             >
               <View>
                 <Icon size={42} color={Colors.text} />
               </View>
-              <Text h3>{text}</Text>
+              <Text h3 style={{ color: color ?? Colors.text }}>
+                {text}
+              </Text>
             </TouchableOpacity>
           )}
         />
