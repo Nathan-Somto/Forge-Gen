@@ -22,10 +22,19 @@ const cld = new Cloudinary({
     shorten: true,
   },
 });
+export interface SuccessResponse {
+    secure_url: string;
+    public_id: string;
+    width: number;
+    height: number;
+}
+export interface ErrorResponse {
+    message: string;
+}
 export const cldUpload = async (
   file: string,
-  onSucess: () => void,
-  onError: () => void
+  onSucess: (succRes: SuccessResponse) => void,
+  onError: (errRes:ErrorResponse) => void
 ) => {
   await uploadBase64(cld, {
     file,
@@ -34,10 +43,16 @@ export const cldUpload = async (
       unsigned: true,
     },
     callback: (error, response) => {
-      response?.secure_url;
-      response?.public_id;
-      response?.width;
-      response?.height;
+      if(error){
+        onError({message:error.message});
+        return;
+      }
+        onSucess({
+            secure_url: response?.secure_url ?? '',
+            public_id: response?.public_id ?? '',
+            width: response?.width ?? 0,
+            height: response?.height ?? 0,
+        });
     },
   });
 };
