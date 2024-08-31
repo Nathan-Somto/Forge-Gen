@@ -7,15 +7,20 @@ import { Entypo, Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { profileCards } from "@/constants/Values";
+import { router } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Profile() {
+  const {
+    auth: { user },
+  } = useAuth();
   const { url, Options, handlePress, base64 } = useImagePicker({
     optionTitle: "Profile Photo",
   });
   const transformations = 8;
-  const credits = 10;
-  
-  const [selectedTab, setSelectedTab] = useState<string>('Transformations');
+  const credits = user?.creditBalance || 0;
+
+  const [selectedTab, setSelectedTab] = useState<string>("Transformations");
 
   const handleTabPress = (tab: string) => {
     setSelectedTab(tab);
@@ -43,9 +48,9 @@ export default function Profile() {
                   className="w-[95%] h-[95%] rounded-full relative items-center justify-center"
                   style={{ backgroundColor: Colors.primary }}
                 >
-                  {url ? (
+                  {(url || user?.avatarUrl)? (
                     <Image
-                      source={{ uri: url }}
+                      source={{ uri: user?.avatarUrl ?? url ?? '' }}
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
@@ -67,10 +72,12 @@ export default function Profile() {
               </LinearGradient>
             </TouchableOpacity>
             <View className="ml-2">
-              <Text h2>John Doe</Text>
-              <Text className="mt-0.5" style={{ color: Colors.neutral }}>
-                johndoe@gmail.com
-              </Text>
+              <View>
+                <Text h2>{user?.username}</Text>
+                <Text className="mt-0.5" style={{ color: Colors.neutral }}>
+                  {user?.email}
+                </Text>
+              </View>
             </View>
           </View>
           <View className="w-full mt-5 mb-3 flex-row gap-x-3">
@@ -80,7 +87,11 @@ export default function Profile() {
                 className="h-[120px] my-3 justify-center w-[48%] rounded-lg p-4"
                 style={{ backgroundColor: Colors.secondary }}
               >
-                <Text h3 className="mb-2" style={{ color: Colors.neutral, fontSize: 16 }}>
+                <Text
+                  h3
+                  className="mb-2"
+                  style={{ color: Colors.neutral, fontSize: 16 }}
+                >
                   {item.title}
                 </Text>
                 <View className="flex-row items-center">
@@ -88,14 +99,16 @@ export default function Profile() {
                     source={item.image}
                     className="object-center w-[40px] h-[30px] object-cover mr-4"
                   />
-                  <Text h3 style={{ color: Colors.btnPrimary }}>{item.value}</Text>
+                  <Text h3 style={{ color: Colors.btnPrimary }}>
+                    {item.value}
+                  </Text>
                 </View>
               </View>
             ))}
           </View>
 
           <FlatList
-            data={['Transformations', 'Liked', 'Downloaded']}
+            data={["Transformations", "Liked", "Downloaded"]}
             keyExtractor={(item) => item}
             horizontal
             renderItem={({ item }) => (
@@ -104,13 +117,15 @@ export default function Profile() {
                 className="px-5 py-2"
                 style={{
                   borderBottomWidth: selectedTab === item ? 2 : 0,
-                  borderBottomColor: selectedTab === item ? Colors.btnPrimary : 'transparent',
+                  borderBottomColor:
+                    selectedTab === item ? Colors.btnPrimary : "transparent",
                 }}
               >
                 <Text
                   style={{
-                    textAlign: 'center',
-                    color: selectedTab === item ? Colors.btnPrimary : Colors.neutral,
+                    textAlign: "center",
+                    color:
+                      selectedTab === item ? Colors.btnPrimary : Colors.neutral,
                   }}
                 >
                   {item}
