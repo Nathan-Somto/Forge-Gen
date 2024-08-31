@@ -1,5 +1,7 @@
+import 'react-native-url-polyfill/auto'
 import Colors from "@/constants/Colors";
 import { Fonts } from "@/constants/Typo";
+import { AuthProvider } from "@/context/AuthProvider";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -52,12 +54,13 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <>
+    <AuthProvider>
       <StatusBar style="light" />
       <Stack>
+        <Stack.Screen name="index"  options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(root)" options={{ headerShown: false }} />
       </Stack>
-    </>
+    </AuthProvider>
   );
 }
