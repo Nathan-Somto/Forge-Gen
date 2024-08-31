@@ -15,7 +15,7 @@ export default function GradientButton({ children, ...props }: Props) {
       >
         <Button
           {...props}
-          containerClassName="h-full"
+          containerClassName="h-full w-full"
           variant="transparent"
         >
           {children}
