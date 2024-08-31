@@ -76,7 +76,7 @@ export const transformationLinks: TransformationLinks = [
   },
 ];
 
-export  const aspectRatios = [
+export  const aspectRatios: DropdownData<AspectRatios> = [
   { label: 'Square (1:1)', value: '1:1' },
   { label: 'Standard Potrait (4:3)', value: '4:3' },
   { label: 'Phone Potrait (16:9)', value: '16:9' },
@@ -114,14 +114,20 @@ export const SettingsLinks = [{
   id: 2
 },
 {
-  text: "Buy Credits",
-  Icon: (props: IconProps) => <Feather name="shopping-bag"  {...props}/>,
+  text: "Payment History",
+  Icon: (props: IconProps) => <Feather name="credit-card"  {...props}/>,
   id: 3
 },
 {
-  text: "Log out",
-  Icon: (props: IconProps) => <Feather name="log-out"  {...props}/>,
+  text: "Buy Credits",
+  Icon: (props: IconProps) => <Feather name="shopping-bag"  {...props}/>,
   id: 4
+},
+{
+  text: "Log out",
+  Icon: (props: IconProps) => <Feather name="log-out"  {...props} color={'#eb344c'}/>,
+  id: 5,
+  color: "#eb344c"
 }
 ];
 export const pricingValues: PricingValues[] = [{
