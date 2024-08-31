@@ -1,9 +1,9 @@
 import {
-  View,
   TouchableOpacity,
   StyleProp,
   ViewStyle,
   TextStyle,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
@@ -13,11 +13,12 @@ type Props = {
   variant?: Variant;
   containerClassName?: string;
   textClassName?: string;
-  textStyles?:  StyleProp<TextStyle>;
+  textStyles?: StyleProp<TextStyle>;
   containerStyles?: StyleProp<ViewStyle>;
   onPress?: () => void;
   children?: React.ReactNode;
   disabled?: boolean;
+  loading?: boolean;
 };
 function getContainerVariant(variant: Variant): StyleProp<ViewStyle> {
   switch (variant) {
@@ -32,11 +33,11 @@ function getContainerVariant(variant: Variant): StyleProp<ViewStyle> {
         borderColor: Colors.btnPrimary,
       };
     case "white":
-        return { backgroundColor: Colors.text };
+      return { backgroundColor: Colors.text };
     default:
-        return {
-            backgroundColor: "transparent"
-        }
+      return {
+        backgroundColor: "transparent",
+      };
   }
 }
 export function Button({
@@ -47,20 +48,28 @@ export function Button({
   containerClassName,
   containerStyles,
   textStyles,
-  disabled
+  disabled,
+  loading,
 }: Props) {
+  const color = variant === "white" ? "#000" : Colors.text;
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={disabled || loading}
       onPress={onPress}
-      className={`px-8 h-[40px] rounded-[12px] justify-center ${containerClassName} `}
+      className={`px-8 h-[40px] rounded-[12px] justify-center ${containerClassName} ${
+        (disabled || loading) && "opacity-50"
+      } `}
       style={[getContainerVariant(variant), containerStyles]}
     >
       <Text
         className={`text-center ${textClassName}`}
-        style={[{ color: variant === 'white' ? '#000' : Colors.text, }, textStyles]}
+        style={[{ color }, textStyles]}
       >
-        {children}
+        {loading ? (
+          <ActivityIndicator size={"large"} color={color} />
+        ) : (
+          children
+        )}
       </Text>
     </TouchableOpacity>
   );
