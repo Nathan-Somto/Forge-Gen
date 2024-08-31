@@ -3,6 +3,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import React from "react";
 import FormField from "@/components/FormField";
@@ -13,7 +14,11 @@ import GradientHeading from "@/components/GradientHeading";
 import Colors from "@/constants/Colors";
 import { GoogleButton } from "@/components/GoogleButton";
 import { Text } from "@/components/ui/Text";
+import { getCurrentUser, signIn } from "@/lib/appwrite";
+import { useAuth } from "@/hooks/useAuth";
 export default function SignIn() {
+  const {login} = useAuth();
+  const [submitting, setSubmitting] = React.useState(false);
   const [data, setData] = React.useState({
     email: "",
     password: "",
@@ -21,9 +26,19 @@ export default function SignIn() {
   const handleChange = (label: string, text: string) => {
     setData((prev) => ({ ...prev, [label.toLowerCase()]: text }));
   };
-  const handleSubmit = () => {
-    console.log(data);
-    router.push("/(root)/(tabs)/");
+  const handleSubmit = async () => {
+    setSubmitting(true)
+    try {
+      await signIn(data.email, data.password);
+      const user = await getCurrentUser();
+      login(user);
+      router.replace("/(root)/(tabs)/");
+    }
+    catch(err){
+      Alert.alert("Error Occured", (err as Error).message)
+    }finally{
+      setSubmitting(false)
+    }
   };
   return (
     <PrimaryBackground>
@@ -61,6 +76,7 @@ export default function SignIn() {
               <GradientButton
                 onPress={handleSubmit}
                 containerStyles={{ width: 1000 }}
+                loading={submitting}
               >
                 Login
               </GradientButton>
