@@ -7,8 +7,9 @@ const appwriteConfig = {
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID ?? '',
   platform: "com.company.forge-gen",
   databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID ?? '',
-  userCollectionId: "66d1fb6e002e74f1c3e3"
+  userCollectionId: process.env.EXPO_PUBLIC_APPWRITE_USER_COLLECTION_ID ?? '',
 }
+
 let client = new Client();
 client
   .setEndpoint(appwriteConfig.endpoint)

@@ -3,7 +3,7 @@ export {
   createUser,
   getCurrentUser,
   googleLogin,
-  login,
+  signIn,
   logout,
   signUp,
   updateUser,
