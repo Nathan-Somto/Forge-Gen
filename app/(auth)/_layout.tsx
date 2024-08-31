@@ -23,7 +23,6 @@ export default function _layout() {
         },
       }}
     >
-      <Stack.Screen name="welcome" options={{ headerShown: false }} />
       <Stack.Screen name="sign-in"  />
       <Stack.Screen name="sign-up" />
     </Stack>

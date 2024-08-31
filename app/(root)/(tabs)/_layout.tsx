@@ -2,7 +2,8 @@ import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
 import Colors from "@/constants/Colors";
-import { StyleProp, TextStyle } from "react-native";
+import { Image, View } from "react-native";
+import { useAuth } from "@/hooks/useAuth";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -19,9 +20,14 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const {
+    auth: { user },
+  } = useAuth();
+  const profileIconSize = 30;
+
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={() => ({
         tabBarStyle: {
           backgroundColor: Colors.tabBackground,
           borderWidth: 0,
@@ -43,7 +49,7 @@ export default function TabLayout() {
             <FontAwesome name="gear" size={25} color={Colors.text} />
           </Link>
         ),
-      }}
+      })}
     >
       <Tabs.Screen
         name="index"
@@ -68,13 +74,37 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile/[profile]"
+        name="profile"
         options={{
           title: "You",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="user-circle" color={color} />
-          ),
-          href: "/(root)/(tabs)/profile/1234",
+          headerTitle: "",
+          tabBarIcon: ({ color, focused,  }) => {
+            if (user?.avatarUrl) {
+              return (
+                <View
+                  style={{
+                    borderColor: focused
+                      ? Colors.tabIconSelected
+                      : "transparent",
+                    borderWidth: 3,
+                    borderRadius: 30,
+                    padding: 2,
+                  }}
+                >
+                  <Image
+                    source={{ uri: user.avatarUrl }}
+                    style={{
+                      width: profileIconSize,
+                      height: profileIconSize,
+                      borderRadius: profileIconSize / 2,
+                    }}
+                  />
+                </View>
+              );
+            } else {
+              return <TabBarIcon name="user-circle" color={color} />;
+            }
+          }
         }}
       />
     </Tabs>

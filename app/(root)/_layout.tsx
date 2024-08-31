@@ -1,11 +1,14 @@
 import Colors from "@/constants/Colors";
 import Typo from "@/constants/Typo";
+import { useAuth } from "@/hooks/useAuth";
 import { Feather, FontAwesome } from "@expo/vector-icons";
-import { Link, router, Stack } from "expo-router";
+import { Link, Redirect, router, Stack } from "expo-router";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 
 export default function RootLayout() {
+  const {auth: {user, checking}} = useAuth();
+  if(!user && !checking) return <Redirect href="/(auth)/sign-in"/>
   return (
     <Stack
       screenOptions={{
