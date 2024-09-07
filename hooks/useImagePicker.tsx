@@ -5,12 +5,13 @@ import { Text } from "@/components/ui/Text";
 import { Entypo, Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Sheet from "@/components/ui/Sheet";
+import { AppwriteFile } from "@/lib/appwrite";
 
 export function useImagePicker({ optionTitle }: { optionTitle: string }) {
   const [url, setUrl] = React.useState<string | null>(null);
   const [base64, setBase64] = React.useState<string | null>(null);
   const [displayOptions, setDisplayOptions] = React.useState<boolean>(false);
-
+  const [appwriteFile, setAppwriteFile] = React.useState<AppwriteFile | null>(null);
   const handleImagePick = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
@@ -19,8 +20,17 @@ export function useImagePicker({ optionTitle }: { optionTitle: string }) {
       selectionLimit: 1,
     });
     if (!result.canceled) {
-      setUrl(result.assets[0].uri);
-      setBase64(result.assets[0]?.base64 ?? null);
+      if (result.assets.length === 0) return;
+      const asset = result.assets[0];
+      const file: AppwriteFile = {
+        name: asset.fileName ?? 'no name',
+        size: asset.fileSize ?? 0,
+        type: asset.type ?? 'image/jpeg',
+        uri: asset.uri,
+      }
+      setAppwriteFile(file);
+      setUrl(asset.uri);
+      setBase64(asset.base64 ?? null);
     }
     setDisplayOptions(false);
   };
@@ -102,5 +112,5 @@ export function useImagePicker({ optionTitle }: { optionTitle: string }) {
     );
   };
 
-  return { url, Options, handlePress, base64 };
+  return { url, Options, handlePress, base64, appwriteFile };
 }
