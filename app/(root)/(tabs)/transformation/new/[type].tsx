@@ -11,7 +11,6 @@ export default function NewTransformation() {
       <ScrollView className="px-5 flex-1">
         <TransformationForm
           type={type as TransformationTypeKey}
-          userId="1234"
         />
       </ScrollView>
     </PrimaryBackground>
