@@ -39,7 +39,7 @@ export const cldUpload = async (
   await uploadBase64(cld, {
     file,
     options: {
-      upload_preset: "",
+      upload_preset: "transformation_preset",
       unsigned: true,
     },
     callback: (error, response) => {
