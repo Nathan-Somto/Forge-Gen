@@ -15,7 +15,7 @@ import { Text } from "./Text";
 type Props = {
   onClose: () => void;
   children?: React.ReactNode;
-  title: string;
+  title?: string;
   open?: boolean;
   height?: number;
   sheetContentStyles?: StyleProp<ViewStyle>;
@@ -30,13 +30,15 @@ export default function Sheet({
 }: Props) {
   const deviceHeight = Dimensions.get("window").height;
   const sheetRef = React.useRef<View | null>(null);
-  const [currentHeight, setCurrentHeight] = React.useState(height * deviceHeight);
+  const [currentHeight, setCurrentHeight] = React.useState(
+    height * deviceHeight
+  );
   const minHeight = 100;
   const panResponder = React.useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (_, gestureState) => {
-        const newHeight = height * deviceHeight - gestureState.dy
+        const newHeight = height * deviceHeight - gestureState.dy;
         console.log("heights: ", newHeight, deviceHeight * height);
         console.log("gestureState.dy: ", gestureState.dy);
         // it should be when the sheet is like 100 pixels from the bottom
@@ -58,7 +60,6 @@ export default function Sheet({
         if (gestureState.dy > minHeight && gestureState.vy > 0.5) {
           onClose();
         } else {
-          
           sheetRef.current?.setNativeProps({
             style: {
               height: finalHeight,
@@ -87,12 +88,12 @@ export default function Sheet({
             position: "absolute",
             zIndex: 5,
             width: "95%",
-            height:currentHeight,
+            height: currentHeight,
             paddingHorizontal: 12,
             borderTopEndRadius: 12,
             paddingVertical: 16,
             alignItems: "center",
-            marginHorizontal: "1%"
+            marginHorizontal: "1%",
           }}
         >
           <TouchableOpacity
@@ -101,14 +102,19 @@ export default function Sheet({
           >
             <Feather name="x" size={20} color={Colors.secondary} />
           </TouchableOpacity>
-          <Text h1 style={{ color: "#000", marginTop: 10 }}>
-            {title}
-          </Text>
+          {title && (
+            <Text h1 style={{ color: "#000", marginTop: 10 }}>
+              {title}
+            </Text>
+          )}
           <View
-            style={[{
-              width: "100%",
-              paddingHorizontal:4,
-            }, sheetContentStyles]}
+            style={[
+              {
+                width: "100%",
+                paddingHorizontal: 4,
+              },
+              sheetContentStyles,
+            ]}
           >
             {children}
           </View>
