@@ -11,7 +11,6 @@ declare type TransformationLinks = {
 }[];
 declare type TransformationFormProps = {
   type: TransformationTypeKey;
-  userId: string;
 };
 declare type TransformationFormInfo = {
   [i in TransformationTypeKey]: {
@@ -38,15 +37,15 @@ declare type PricingValues = {
     isIncluded: boolean;
   }[];
 };
-declare type IconBtnProps = {
+
+declare type BtmSheetBtns = {
+  type: "delete" | "download"  | "share";
   Icon: (props: IconProps) => React.ReactNode;
+  danger?: boolean;
+};
+declare type BtmSheetBtnProps = BtmSheetBtns & {
   handlePress: () => void;
-  LikedIcon?: (props: IconProps) => React.ReactNode;
-  isLiked?: boolean;
-};
-declare type IconBtns = Pick<IconBtnProps, "Icon" | "LikedIcon"> & {
-  type: "delete" | "download" | "like";
-};
+} 
 declare type AspectRatios = "1:1" | "4:3" | "16:9";
 declare type TransformationData = {
   title: string;
@@ -67,20 +66,34 @@ declare interface IUser {
   avatarUrl: string;
   creditBalance: number;
   downloads: number;
+  downloadsLeft: number;
 }
-declare interface ITransformations {
-  id: string;
+
+declare interface ITransformation {
+  public_id: string;
   title: string;
-  objectToRecolor?: string;
-  objectToRemove?: string;
-  color?: string;
-  aspectRatio?: AspectRatios;
+  width: number;
+  height: number;
+  transData: {
+    prompt?: string;
+    color?: string;
+    aspectRatio?: AspectRatios;
+  };
   ogImgUrl: string;
-  trnsImgUrl: string;
+  transImgUrl: string;
   transformationType: TransformationTypeKey;
   ownerId: string;
   userIds: string[]; // use this to determine the likes
+  // property for determing the users that have downloaded the image
   downloads: number;
+  // perform a count on the times 
+  usersWhoDownloaded: string[];
+}
+declare interface ITransformationData  extends Omit<ITransformation, 'transData'>{
+  prompt?: string;
+    color?: string;
+  aspectRatio?: AspectRatios;
+  created_at: string | Date;
 }
 declare interface ITransaction {
   id: string;

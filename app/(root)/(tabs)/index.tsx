@@ -6,52 +6,63 @@ import {
   Keyboard,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  View,
 } from "react-native";
-import { View } from "react-native";
-import { Text } from "@/components/ui/Text";
-import { dummyData } from "@/components/ImageCard/dummyData";
-import React from "react";
+import React, { useRef, useState } from "react";
 import GradientHeading from "@/components/GradientHeading";
 import { SearchBox } from "@/components/SearchBox";
 import { transformationLinks } from "@/constants/Values";
 import Collection from "@/components/Collection";
 import ImageCard from "@/components/ImageCard";
+import { getTransformations } from "@/lib/appwrite/transformations";
+import { useCursor } from "@/hooks/useCursor";
+import { Text } from "@/components/ui/Text";
 
 export default function HomeScreen() {
-  const TabsRef = React.useRef<FlatList | null>(null);
-  const [generations, setGenerations] = React.useState(dummyData);
-  const pageSize = 5;
-  const totalPages = Math.ceil(generations.length / pageSize);
-  const [page, setPage] = React.useState(1);
-  const [searchValue, setSearchValue] = React.useState("");
-  const [transformationType, setTransformationTpe] = React.useState("All");
+  const TabsRef = useRef<FlatList | null>(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [transformationType, setTransformationType] = useState("All");
+  const originalTransData = React.useRef<ITransformation[]>([]);
+  const [transData, setTransData] = useState<ITransformation[]>([]);
+  const {
+    data: transformations,
+    fetchNextCursor,
+    isFetching,
+    hasMore,
+  } = useCursor<ITransformation>(getTransformations, 10, 'transformations');
+  React.useEffect(() => {
+    originalTransData.current = transformations;
+    setTransData(transformations);
+  }, [transformations]);
   const handleFilter = (text: string) => {
     setSearchValue(text);
     if (text === "") {
-      setGenerations(dummyData);
+      setTransData(originalTransData.current);
       return;
     }
-    const filteredData = dummyData.filter((item) =>
+    const filteredData = transData?.filter((item) =>
       item.title.toLowerCase().includes(text.toLowerCase())
     );
-    setGenerations(filteredData);
+    // Handle filtered data
+    setTransData(filteredData);
   };
+  console.log("transData: ", transData);
   const handleTransformFilter = (text: string, index: number) => {
     if (text === "All") {
-      setGenerations(dummyData);
-      setTransformationTpe(text);
+      // Handle resetting to all data
+      setTransformationType(text);
+      setTransData(originalTransData.current);
       return;
     }
-    const filteredData = dummyData.filter(
+    const filteredData = transformations?.filter(
       (item) => item.transformationType === text
     );
-    setGenerations(filteredData);
-    setTransformationTpe(text);
+    // Handle filtered data
+    setTransformationType(text);
     TabsRef.current?.scrollToIndex({ index, animated: true });
+    setTransData(filteredData);
   };
-  const fetchNextPage = () => {
-    setPage((prev) => prev + 1);
-  };
+
   return (
     <PrimaryBackground>
       <TouchableWithoutFeedback
@@ -108,7 +119,7 @@ export default function HomeScreen() {
             />
           </View>
           <View className="px-3 flex-1">
-            {generations.length === 0 ? (
+            {transData?.length === 0 ? (
               <View className="h-[70%] justify-center items-center opacity-50">
                 <MaterialCommunityIcons
                   name="image-off"
@@ -126,12 +137,11 @@ export default function HomeScreen() {
             ) : (
               <Collection
                 El={ImageCard}
-                data={generations}
-                page={page}
-                totalPages={totalPages}
-                pageSize={pageSize}
-                fetchNextPage={fetchNextPage}
-                getPrevPage={() => setPage((prev) => prev - 1)}
+                data={transData}
+                fetchNextCursor={fetchNextCursor}
+                extractKey={(item) => item.public_id}
+                hasMore={hasMore}
+                isFetchingNextCursor={isFetching}
               />
             )}
           </View>
