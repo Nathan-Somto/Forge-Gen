@@ -1,4 +1,11 @@
-import { TouchableOpacity, View, Image, FlatList } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Image,
+  FlatList,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
 import { Text } from "@/components/ui/Text";
 import PrimaryBackground from "@/components/PrimaryBackground";
@@ -9,23 +16,169 @@ import { LinearGradient } from "expo-linear-gradient";
 import { profileCards } from "@/constants/Values";
 import { router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
-
+import {
+  getAvatarUrl,
+  getUserTransformations,
+  getUserTransformationsQuery,
+  updateUser,
+  uploadAvatar,
+} from "@/lib/appwrite";
+import ImageCard from "@/components/ImageCard";
+import { storage } from "@/lib/appwrite/appwrite";
+import { Button } from "@/components/ui/Button";
+type TabsType = "transformations" | "liked" | "downloaded";
+const tabsOptions: ReadonlyArray<TabsType> = [
+  "transformations",
+  "liked",
+  "downloaded",
+];
 export default function Profile() {
   const {
     auth: { user },
+    updateUserInfo,
   } = useAuth();
-  const { url, Options, handlePress, base64 } = useImagePicker({
+  const { url, Options, handlePress, appwriteFile } = useImagePicker({
     optionTitle: "Profile Photo",
   });
-  const transformations = 8;
+  const [loadingAvatar, setLoadingAvatar] = useState(false);
+  const [showSaveButton, setShowSaveButton] = useState(false);
+  const [loading, setLoading] = useState<Record<TabsType, boolean>>({
+    transformations: false,
+    downloaded: false,
+    liked: false,
+  });
+  const [userTransformations, setUserTransformations] = useState<
+    ITransformation[] | null
+  >(null);
+  const [likedTransformations, setLikedTransformations] = useState<
+    ITransformation[] | null
+  >(null);
+  const [downloadedTransformations, setDownloadedTransformations] = useState<
+    ITransformation[] | null
+  >(null);
   const credits = user?.creditBalance || 0;
-
+  React.useEffect(() => {
+    if (url && url !== user?.avatarUrl) {
+      setShowSaveButton(true);
+    } else {
+      setShowSaveButton(false);
+    }
+  }, [url, user?.avatarUrl]);
+  React.useEffect(() => {
+    async function fetchUserTransformations() {
+      if (!user?.accountId) return;
+      if (userTransformations) return;
+      setLoading({ ...loading, transformations: true });
+      try {
+        // Fetch user transformations
+        const data = await getUserTransformations(user?.accountId);
+        setUserTransformations(data);
+      } catch (e) {
+        console.log(e);
+        Alert.alert(
+          "Error",
+          "An error occurred while fetching user transformations"
+        );
+      } finally {
+        setLoading({ ...loading, transformations: false });
+      }
+    }
+    fetchUserTransformations();
+  }, [user?.accountId]);
   const [selectedTab, setSelectedTab] = useState<string>("Transformations");
 
-  const handleTabPress = (tab: string) => {
-    setSelectedTab(tab);
+  const transformations =
+    userTransformations !== null ? userTransformations.length : 0;
+  const handleTabPress = async (tab: keyof typeof loading) => {
+    try {
+      setSelectedTab(tab);
+      if (user === null) return;
+      // based on the seleceted tab if the data is not fetched then fetch it
+      // if data is already being fetched then do nothing
+      if (loading.downloaded || loading.liked || loading.transformations)
+        return;
+      if (tab === "transformations" && userTransformations === null) {
+        setLoading({ ...loading, transformations: true });
+        const data = await getUserTransformations(user?.accountId ?? "");
+        setUserTransformations(data);
+      }
+      if (tab === "liked" && likedTransformations === null) {
+        setLoading({ ...loading, liked: true });
+        const data = await getUserTransformationsQuery(
+          user?.accountId ?? "",
+          "liked"
+        );
+        setLikedTransformations(data);
+      }
+      if (tab === "downloaded" && downloadedTransformations === null) {
+        setLoading({ ...loading, downloaded: true });
+        const data = await getUserTransformationsQuery(
+          user?.accountId ?? "",
+          "downloaded"
+        );
+        setDownloadedTransformations(data);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      if (loading[tab]) return;
+      setLoading({ ...loading, [tab]: false });
+    }
   };
+  const handleAvatarUpload = async () => {
+    try {
+      if (!user?.accountId) return;
+      if (appwriteFile) {
+        const result = await uploadAvatar(appwriteFile);
+        if (result) {
+          const resultUrl = getAvatarUrl(result.$id);
+          updateUserInfo({ avatarUrl: resultUrl });
+          await updateUser(user?.accountId, { avatarUrl: resultUrl });
+        }
+      }
+    } catch (e) {
+      Alert.alert("Error", "An error occurred while uploading avatar");
+      console.log(e);
+    }
+  };
+  const renderTransformations = () => {
+    let dataToRender: ITransformation[] | null = null;
 
+    if (selectedTab === "transformations") {
+      dataToRender = userTransformations;
+    } else if (selectedTab === "liked") {
+      dataToRender = likedTransformations;
+    } else if (selectedTab === "downloaded") {
+      dataToRender = downloadedTransformations;
+    }
+
+    if (loading[selectedTab as TabsType]) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color={Colors.btnPrimary}
+          className="mt-5"
+        />
+      );
+    }
+
+    if (!dataToRender || dataToRender.length === 0) {
+      return (
+        <Text className="text-center mt-5">
+          No {selectedTab} transformations found.
+        </Text>
+      );
+    }
+
+    return (
+      <FlatList
+        data={dataToRender}
+        keyExtractor={(item) => item.public_id}
+        renderItem={({ item }) => <ImageCard {...item} />}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+    );
+  };
   return (
     <PrimaryBackground>
       <View className="flex-1">
@@ -48,9 +201,9 @@ export default function Profile() {
                   className="w-[95%] h-[95%] rounded-full relative items-center justify-center"
                   style={{ backgroundColor: Colors.primary }}
                 >
-                  {(url || user?.avatarUrl)? (
+                  {url || user?.avatarUrl ? (
                     <Image
-                      source={{ uri: user?.avatarUrl ?? url ?? '' }}
+                      source={{ uri: user?.avatarUrl ?? url ?? "" }}
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
@@ -71,13 +224,27 @@ export default function Profile() {
                 </View>
               </LinearGradient>
             </TouchableOpacity>
-            <View className="ml-2">
+            <View className="ml-2 flex-row">
               <View>
                 <Text h2>{user?.username}</Text>
                 <Text className="mt-0.5" style={{ color: Colors.neutral }}>
                   {user?.email}
                 </Text>
               </View>
+              {showSaveButton && (
+                <Button
+                  variant="white"
+                  onPress={handleAvatarUpload}
+                  disabled={loadingAvatar}
+                  containerStyles={{ height: 35 }}
+                >
+                  {loadingAvatar ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text>Save Avatar</Text>
+                  )}
+                </Button>
+              )}
             </View>
           </View>
           <View className="w-full mt-5 mb-3 flex-row gap-x-3">
@@ -108,7 +275,7 @@ export default function Profile() {
           </View>
 
           <FlatList
-            data={["Transformations", "Liked", "Downloaded"]}
+            data={tabsOptions}
             keyExtractor={(item) => item}
             horizontal
             renderItem={({ item }) => (
@@ -126,6 +293,7 @@ export default function Profile() {
                     textAlign: "center",
                     color:
                       selectedTab === item ? Colors.btnPrimary : Colors.neutral,
+                    textTransform: "capitalize",
                   }}
                 >
                   {item}
@@ -134,6 +302,7 @@ export default function Profile() {
             )}
           />
         </View>
+        <View className="mt-3">{renderTransformations()}</View>
         <Options />
       </View>
     </PrimaryBackground>
