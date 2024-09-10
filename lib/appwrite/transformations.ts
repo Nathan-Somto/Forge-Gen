@@ -125,3 +125,10 @@ export const likeTransformation = async (
     { userIds }
   );
 };
+export const deleteTransformation = async (transformationId: string) => {
+ return await database.deleteDocument(
+    appwriteConfig.databaseId,
+    appwriteConfig.transCollectionId,
+    transformationId
+  );
+}
