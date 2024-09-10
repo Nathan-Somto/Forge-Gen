@@ -22,7 +22,7 @@ export default function index() {
     auth: { user, checking },
   } = useAuth();
   if (user) {
-    return <Redirect href="/root/(tabs)/" />;
+    return <Redirect href="/(root)/(tabs)/" />;
   }
   if (!user) {
     return (
