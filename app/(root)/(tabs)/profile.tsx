@@ -37,6 +37,7 @@ export default function Profile() {
     auth: { user },
     updateUserInfo,
   } = useAuth();
+  const userId = user?.$id ?? "";
   const { url, Options, handlePress, appwriteFile } = useImagePicker({
     optionTitle: "Profile Photo",
   });
@@ -47,6 +48,7 @@ export default function Profile() {
     downloaded: false,
     liked: false,
   });
+  const [selectedTab, setSelectedTab] = useState<TabsType>("transformations");
   const [userTransformations, setUserTransformations] = useState<
     ITransformation[] | null
   >(null);
@@ -66,12 +68,12 @@ export default function Profile() {
   }, [url, user?.avatarUrl]);
   React.useEffect(() => {
     async function fetchUserTransformations() {
-      if (!user?.accountId) return;
+      if (!userId) return;
       if (userTransformations) return;
       setLoading({ ...loading, transformations: true });
       try {
         // Fetch user transformations
-        const data = await getUserTransformations(user?.accountId);
+        const data = await getUserTransformations(userId);
         setUserTransformations(data);
       } catch (e) {
         console.log(e);
@@ -84,38 +86,31 @@ export default function Profile() {
       }
     }
     fetchUserTransformations();
-  }, [user?.accountId]);
-  const [selectedTab, setSelectedTab] = useState<string>("Transformations");
+  }, [userId]);
 
   const transformations =
     userTransformations !== null ? userTransformations.length : 0;
   const handleTabPress = async (tab: keyof typeof loading) => {
     try {
       setSelectedTab(tab);
-      if (user === null) return;
+      if (userId === "") return;
       // based on the seleceted tab if the data is not fetched then fetch it
       // if data is already being fetched then do nothing
       if (loading.downloaded || loading.liked || loading.transformations)
         return;
       if (tab === "transformations" && userTransformations === null) {
         setLoading({ ...loading, transformations: true });
-        const data = await getUserTransformations(user?.accountId ?? "");
+        const data = await getUserTransformations(userId);
         setUserTransformations(data);
       }
       if (tab === "liked" && likedTransformations === null) {
         setLoading({ ...loading, liked: true });
-        const data = await getUserTransformationsQuery(
-          user?.accountId ?? "",
-          "liked"
-        );
+        const data = await getUserTransformationsQuery(userId, "liked");
         setLikedTransformations(data);
       }
       if (tab === "downloaded" && downloadedTransformations === null) {
         setLoading({ ...loading, downloaded: true });
-        const data = await getUserTransformationsQuery(
-          user?.accountId ?? "",
-          "downloaded"
-        );
+        const data = await getUserTransformationsQuery(userId, "downloaded");
         setDownloadedTransformations(data);
       }
     } catch (e) {
@@ -127,13 +122,13 @@ export default function Profile() {
   };
   const handleAvatarUpload = async () => {
     try {
-      if (!user?.accountId) return;
+      if (user === null || userId === '') return;
       if (appwriteFile) {
         const result = await uploadAvatar(appwriteFile);
         if (result) {
           const resultUrl = getAvatarUrl(result.$id);
-          updateUserInfo({ avatarUrl: resultUrl });
-          await updateUser(user?.accountId, { avatarUrl: resultUrl });
+          updateUserInfo({ ...user, avatarUrl: resultUrl });
+          await updateUser(userId, { avatarUrl: resultUrl });
         }
       }
     } catch (e) {
@@ -152,20 +147,15 @@ export default function Profile() {
       dataToRender = downloadedTransformations;
     }
 
-    if (loading[selectedTab as TabsType]) {
-      return (
-        <ActivityIndicator
-          size="large"
-          color={Colors.btnPrimary}
-          className="mt-5"
-        />
-      );
+    if (loading[selectedTab]) {
+      return <ActivityIndicator size="large" color={Colors.btnPrimary} />;
     }
 
     if (!dataToRender || dataToRender.length === 0) {
       return (
         <Text className="text-center mt-5">
-          No {selectedTab} transformations found.
+          No {selectedTab === "transformations" ? null : selectedTab}{" "}
+          transformations found.
         </Text>
       );
     }
