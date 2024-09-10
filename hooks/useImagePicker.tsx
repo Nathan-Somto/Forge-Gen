@@ -1,17 +1,24 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
-import { Modal, TouchableOpacity, View, PanResponder } from "react-native";
+import { Modal, TouchableOpacity, View, PanResponder, Alert } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { Entypo, Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import Sheet from "@/components/ui/Sheet";
 import { AppwriteFile } from "@/lib/appwrite";
 
-export function useImagePicker({ optionTitle }: { optionTitle: string }) {
+export function useImagePicker({ optionTitle, sizeLimit }: { optionTitle: string, sizeLimit?:number }) {
   const [url, setUrl] = React.useState<string | null>(null);
   const [base64, setBase64] = React.useState<string | null>(null);
   const [displayOptions, setDisplayOptions] = React.useState<boolean>(false);
   const [appwriteFile, setAppwriteFile] = React.useState<AppwriteFile | null>(null);
+  const isTooLarge = (fileSize: number | undefined ) => {
+    if(fileSize && sizeLimit && fileSize > sizeLimit){
+      Alert.alert('File size is too large');
+      return true;
+    }
+    return false;
+  }
   const handleImagePick = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
@@ -22,6 +29,7 @@ export function useImagePicker({ optionTitle }: { optionTitle: string }) {
     if (!result.canceled) {
       if (result.assets.length === 0) return;
       const asset = result.assets[0];
+      if(isTooLarge(asset.fileSize)) return;
       const file: AppwriteFile = {
         name: asset.fileName ?? 'no name',
         size: asset.fileSize ?? 0,
@@ -43,6 +51,9 @@ export function useImagePicker({ optionTitle }: { optionTitle: string }) {
       cameraType: ImagePicker.CameraType.front,
     });
     if (!result.canceled) {
+      if (result.assets.length === 0) return;
+      const asset = result.assets[0];
+      if(isTooLarge(asset.fileSize)) return;
       setUrl(result.assets[0].uri);
       setBase64(result.assets[0]?.base64 ?? null);
     }

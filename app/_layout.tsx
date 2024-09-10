@@ -1,5 +1,4 @@
 import 'react-native-url-polyfill/auto'
-import Colors from "@/constants/Colors";
 import { Fonts } from "@/constants/Typo";
 import { AuthProvider } from "@/context/AuthProvider";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -24,15 +23,15 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+ /*  const [loaded, error] = useFonts({
     [Fonts.Semibold]: require("@/assets/fonts/Poppins-SemiBold.ttf"),
     [Fonts.Regular]: require("@/assets/fonts/Poppins-Regular.ttf"),
     [Fonts.Medium]: require("@/assets/fonts/Poppins-Medium.ttf"),
     ...FontAwesome.font,
-  });
+  }); */
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
+ /*  useEffect(() => {
     if (error) throw error;
   }, [error]);
 
@@ -47,7 +46,7 @@ export default function RootLayout() {
 
   if (!loaded) {
     return null;
-  }
+  } */
 
   return <RootLayoutNav />;
 }

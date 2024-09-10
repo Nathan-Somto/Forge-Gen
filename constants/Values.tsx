@@ -141,7 +141,7 @@ export const pricingValues: PricingValues[] = [{
       isIncluded: true
     },
     {
-      text: '5 Free Downloads',
+      text: '50 Free Downloads',
       isIncluded: true
     },
     {
@@ -173,14 +173,14 @@ export const pricingValues: PricingValues[] = [{
   id: "9101",
   plan: "Premium",
   price: 199.99,
-  credits: 10,
+  credits: 1000,
   perks: [
     {
-      text: '10 Credits',
+      text: '1000 Credits',
       isIncluded: true
     },
     {
-      text: 'Unlimited Downloads',
+      text: '5000 Downloads',
       isIncluded: true
     },
     {
@@ -190,20 +190,21 @@ export const pricingValues: PricingValues[] = [{
   ]
 }
 ]
-export const iconBtns: IconBtns[] = [
+export const iconBtns: BtmSheetBtns[] = [
   {
     type: "delete",
     Icon: (props: IconProps) => <Feather name="trash" {...props} color="#eb344c" />,
+    danger: true
   },
   {
     type: "download",
     Icon: (props: IconProps) => <Feather name="download" {...props} />,
   },
   {
-    type: "like",
-    Icon: (props: IconProps) => <Feather name="heart" {...props} />,
-    LikedIcon: (props: IconProps) => <Entypo name="heart" {...props} />,
+    type: "share",
+    Icon: (props: IconProps) => <Feather name="share" {...props} />,
   },
+ 
 ];
 export const profileCards = (balance: number, transformations: number) =>  (
   [

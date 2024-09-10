@@ -1,6 +1,6 @@
 # 🚀 Forge Gen
 
-An AI-powered mobile SaaS application built on top of Cloudinary's transformation APIs, inspired by JS Master's Imagnify.
+An AI-powered mobile SaaS application built on top of Cloudinary's image transformation APIs, inspired by JS Mastery's Imaginify.
 
 ## 📲 Download App
 **Note:** The app is only available on Android.
@@ -9,7 +9,7 @@ An AI-powered mobile SaaS application built on top of Cloudinary's transformatio
 - **TypeScript** 
 - **Appwrite** 
 - **Cloudinary** 
-- **Stripe** 
+- **FlutterWave** 
 - **Expo** 
 - **React Native** 
 - **Expo Router**

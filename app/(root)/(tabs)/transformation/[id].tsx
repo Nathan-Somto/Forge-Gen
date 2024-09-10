@@ -8,17 +8,38 @@ import { Button } from "@/components/ui/Button";
 import { useTransformation } from "@/hooks/useTransformation";
 import { router } from "expo-router";
 import Colors from "@/constants/Colors";
-import { getTotalDownloads } from "@/utils";
+import { useDownloadImage } from "@/hooks/useDownloadImage";
+import { useAuth } from "@/hooks/useAuth";
+import InsufficientCreditsSheet from "@/components/InsufficientCoinsSheet";
 export default function Transformation() {
+  const [showSheet, setShowSheet] = React.useState(false);
   const { current } = useTransformation();
+  const { user } = useAuth((state) => state.auth);
+
   React.useEffect(() => {
     if (current === null) {
       router.back();
     }
   }, [current]);
+  const downloadsLeft = user?.downloadsLeft || 0;
+  const { handleImgDownload, isPending } = useDownloadImage();
   const listData = current ? Object.entries(current.transData) : [];
   listData.unshift(["transformation", current?.transformationType ?? ""]);
-  const handleDownload = (url: string) => {};
+  const handleDownload = async (url: string) => {
+    if (isPending) return;
+    if (!current?.title || !current?.$id) return;
+    try {
+      if (downloadsLeft === 0) {
+        setShowSheet(true);
+        return;
+      }
+      await handleImgDownload({
+        title: current?.title ?? "",
+        url,
+        transId: current?.$id ?? "",
+      });
+    } catch (e) {}
+  };
   return (
     <PrimaryBackground>
       <View className="flex-row flex-wrap px-3 my-5">
@@ -68,8 +89,12 @@ export default function Transformation() {
         <Text h3 style={{ color: Colors.labelText }}>
           Downloads:{" "}
         </Text>
-        <Text>{current?.downloads}</Text>
+        <Text style={{ color: Colors.btnPrimary }}>{current?.downloads}</Text>
       </View>
+      <InsufficientCreditsSheet
+        showSheet={showSheet}
+        onClose={() => setShowSheet(false)}
+      />
     </PrimaryBackground>
   );
 }

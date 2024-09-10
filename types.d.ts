@@ -4,6 +4,7 @@ declare type TransformationTypeKey =
   | "remove"
   | "recolor"
   | "removeBackground";
+declare type Plans = "Free" | "Pro" | "Premium";
 declare type TransformationLinks = {
   label: string;
   type: TransformationTypeKey;
@@ -29,7 +30,7 @@ declare type DialogProps = {
 };
 declare type PricingValues = {
   id: string;
-  plan: string;
+  plan: Plans;
   price: number;
   credits: number;
   perks: {
@@ -45,6 +46,7 @@ declare type BtmSheetBtns = {
 };
 declare type BtmSheetBtnProps = BtmSheetBtns & {
   handlePress: () => void;
+  disable:boolean;
 } 
 declare type AspectRatios = "1:1" | "4:3" | "16:9";
 declare type TransformationData = {
@@ -70,6 +72,7 @@ declare interface IUser {
 }
 
 declare interface ITransformation {
+  $id: string;
   public_id: string;
   title: string;
   width: number;
@@ -89,18 +92,19 @@ declare interface ITransformation {
   // perform a count on the times 
   usersWhoDownloaded: string[];
 }
-declare interface ITransformationData  extends Omit<ITransformation, 'transData'>{
+declare interface ITransformationData  extends Omit<ITransformation, 'transData' | "$id">{
   prompt?: string;
     color?: string;
   aspectRatio?: AspectRatios;
   created_at: string | Date;
 }
 declare interface ITransaction {
-  id: string;
+  tx_ref: string;
   buyer: string;
-  stripeId: string;
-  plan: "free" | "pro" | "premium";
+  flwId: string;
+  plan: Omit<Plans, "Free">;
   amount: number;
-  credits: number;
-  createdAt: string | Date;
+  credits: 1000 | 100;
+  downloads: 5000 | 50;
+  created_at: string | Date;
 }

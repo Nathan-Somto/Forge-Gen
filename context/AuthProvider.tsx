@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/appwrite";
 import React from "react";
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
-  const { login, logout, setChecking } = useAuth();
+  const { login, logout, setChecking, auth } = useAuth();
   React.useEffect(() => {
     const checkAuthStatus = async () => {
       setChecking(true);

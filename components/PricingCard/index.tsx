@@ -7,8 +7,11 @@ import { Text } from "../ui/Text";
 import { Feather } from "@expo/vector-icons";
 import { Button } from "../ui/Button";
 import GradientButton from "../GradientButton";
-type props = PricingValues;
-export default function PricingCard({ plan, price, credits, perks }: props) {
+import { FlutterwaveBtn } from "../FlutterwaveBtn";
+type props = PricingValues & {
+  toggleLoader: () => void;
+};
+export default function PricingCard({ plan, price, credits, perks, toggleLoader }: props) {
   return (
     <View className="w-[80%] h-[360px] mb-6 mx-auto rounded-xl overflow-hidden">
       <LinearGradient
@@ -42,7 +45,7 @@ export default function PricingCard({ plan, price, credits, perks }: props) {
           {price === 0 ? (
             <Button variant="outline" containerStyles={{height: 65}}>Free Consumable</Button>
           ) : (
-            <GradientButton>Buy</GradientButton>
+            <FlutterwaveBtn plan={plan} price={price} toggleLoader={toggleLoader}/>
           )}
           </View>
         </View>

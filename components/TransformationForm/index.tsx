@@ -1,4 +1,10 @@
-import { TouchableOpacity, View, Alert, ActivityIndicator } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Alert,
+  ActivityIndicator,
+  Image,
+} from "react-native";
 import React, { useState } from "react";
 import { Text } from "@/components/ui/Text";
 import FormField from "../FormField";
@@ -18,13 +24,24 @@ import {
   imgRestore,
   SuccessResponse,
 } from "@/lib/cloudinary";
+import { createUserTransformation, updateCredits } from "@/lib/appwrite";
+import { useAuth } from "@/hooks/useAuth";
+import { useTransformation } from "@/hooks/useTransformation";
+import { router } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { useCache } from "@/hooks/useCache";
 
 export default function TransformationForm({
   type,
-  userId,
 }: TransformationFormProps) {
-  const { base64, handlePress, url } = useImagePicker({
+  const {auth: {user}} = useAuth();
+  const {setCache, getCache} = useCache();
+  const userId = user?.$id ?? '';
+  const { updateUserInfo } = useAuth();
+  const { setCurrent } = useTransformation();
+  const { base64, handlePress, url, Options } = useImagePicker({
     optionTitle: "Upload Photo",
+    sizeLimit: 2 * 1024 * 1024 //2mb in bytes
   });
   const [formInfo] = useState(transformationFormInfo[type]);
   const [data, setData] = useState<TransformationData>({
@@ -33,7 +50,6 @@ export default function TransformationForm({
     color: "",
     aspectRatio: "1:1",
   });
-  const [image, setImage] = useState<SuccessResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (key: string, value: string) => {
@@ -64,7 +80,6 @@ export default function TransformationForm({
         cldUpload(
           base64,
           (res) => {
-            setImage(res);
             resolve(res);
           },
           (err) => {
@@ -76,7 +91,10 @@ export default function TransformationForm({
     return null;
   };
 
-  const handleTransform = (type: TransformationTypeKey,{ public_id, height, width }: SuccessResponse) => {
+  const handleTransform = (
+    type: TransformationTypeKey,
+    { public_id, height, width }: SuccessResponse
+  ) => {
     let url = "";
     switch (type) {
       case "removeBackground":
@@ -110,14 +128,51 @@ export default function TransformationForm({
   };
 
   const handleSubmit = async () => {
+    if(!user || userId === '' || user?.creditBalance === 0)  return;
     try {
       setLoading(true);
       const uploadedImage = await handleUpload(base64 ?? "");
+      console.log("uploadedImage: ", uploadedImage);
       if (uploadedImage) {
         const transformedUrl = handleTransform(type, uploadedImage);
-      }  
-      
+
+        const transformData: ITransformationData = {
+          downloads: 0,
+          height: uploadedImage.height,
+          width: uploadedImage.width,
+          ownerId: userId,
+          ogImgUrl: uploadedImage.secure_url,
+          public_id: uploadedImage.public_id,
+          title: data.title,
+          transformationType: type,
+          created_at: new Date(),
+          aspectRatio: data.aspectRatio,
+          color: data.color === "" ? undefined : data.color,
+          prompt: data.prompt === "" ? undefined : data.prompt,
+          usersWhoDownloaded: [],
+          transImgUrl: transformedUrl,
+          userIds: [],
+        };
+        // save to db
+        const savedData = await createUserTransformation(transformData);
+        console.log("savedData: ", savedData);
+        // deduct 1 credit
+        const newBalance = await updateCredits(userId, 1, "dec");
+        // update user credits in store
+        updateUserInfo({...user, creditBalance: newBalance });
+        // update cache
+        setCache('transformations', [savedData, ...(getCache('transformations') ?? [])]);
+        // set the new transformation as the current and navigate to the transformation page
+        setCurrent(savedData);
+        router.replace({
+          pathname: "/(root)/(tabs)/transformation/[id]",
+          params: { id: savedData.public_id },
+        });
+      } else {
+        Alert.alert("Error", "Please upload an image.");
+      }
     } catch (err) {
+      console.log(err);
       Alert.alert("Error", "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -168,26 +223,43 @@ export default function TransformationForm({
         </View>
       )}
       <View className="mt-4">
-        <TouchableOpacity
-          onPress={handlePress}
-          className="h-[300px] border-dotted border justify-center items-center border-white"
-          style={{ backgroundColor: Colors.secondary }}
-        >
-          <View
-            style={{ backgroundColor: Colors.primary }}
-            className="h-[60px] mb-1.5 w-[60px] p-2 flex rounded-full items-center justify-center"
-          >
-            <Feather name="plus" size={26} color="white" />
+        {url ? (
+          <View className="h-[300px] rounded-md overflow-hidden justify-center items-center">
+            <LinearGradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.5 }}
+              colors={Colors.multiColorGradient}
+              className="h-full w-full items-center justify-center overflow-hidden"
+            >
+              <Image
+                source={{ uri: url }}
+                className="h-[98%] w-[98%] rounded-md"
+              />
+            </LinearGradient>
           </View>
-          <Text style={{ color: Colors.neutral }} className="text-center">
-            Click to upload Image
-          </Text>
-        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={handlePress}
+            className="h-[300px] border-dotted border justify-center items-center border-white"
+            style={{ backgroundColor: Colors.secondary }}
+          >
+            <View
+              style={{ backgroundColor: Colors.primary }}
+              className="h-[60px] mb-1.5 w-[60px] p-2 flex rounded-full items-center justify-center"
+            >
+              <Feather name="plus" size={26} color="white" />
+            </View>
+            <Text style={{ color: Colors.neutral }} className="text-center">
+              Click to upload Image
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View className="mt-5" />
       <GradientButton onPress={handleSubmit}>
         {loading ? <ActivityIndicator color="white" /> : "Transform"}
       </GradientButton>
+      <Options />
     </View>
   );
 }

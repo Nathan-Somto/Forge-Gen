@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { useCache } from "./useCache";
 export type FetchFunctionResult<T> = {
-    data: T[];
-    hasMore: boolean;
-    lastId: string | null;
-  }
-type FetchFunction<T> = (lastId: string | null, pageSize: number) => Promise<FetchFunctionResult<T>>;
+  data: T[];
+  hasMore: boolean;
+  lastId: string | null;
+};
+type FetchFunction<T> = (
+  lastId: string | null,
+  pageSize: number
+) => Promise<FetchFunctionResult<T>>;
 
 type UseCursorResult<T> = {
   data: T[];
@@ -19,7 +22,7 @@ export function useCursor<T>(
   pageSize: number,
   key: string
 ): UseCursorResult<T> {
-  const {setCache, getCache} = useCache();
+  const { setCache, getCache } = useCache();
   const [lastId, setLastId] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -31,7 +34,16 @@ export function useCursor<T>(
 
     try {
       const result = await fetchFunction(lastId, pageSize);
-      setCache(key, [...(getCache(key) ?? []), ...result.data]);
+      const cachedData = getCache(key) ?? [];
+      const existingIds = new Set(cachedData.map((item: any) => item.$id));
+
+      const newData = result.data.filter(
+        (item: any) => !existingIds.has(item.$id)
+      );
+
+      if (newData.length > 0) {
+        setCache(key, [...cachedData, ...newData]);
+      }
       setLastId(result.lastId);
       setHasMore(result.hasMore);
     } catch (error) {
@@ -42,7 +54,7 @@ export function useCursor<T>(
   }, [fetchFunction, lastId, hasMore, isFetching, pageSize]);
 
   useEffect(() => {
-    fetchNextCursor(); 
+    fetchNextCursor();
   }, []);
 
   return {

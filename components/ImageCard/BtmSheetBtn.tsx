@@ -6,16 +6,19 @@ export function BtmSheetBtn({
   handlePress,
   type,
   danger,
+  disable
 }: BtmSheetBtnProps) {
   return (
     <TouchableOpacity
       onPress={handlePress}
-      className="flex-row items-center w-full my-2.5"
+      disabled={disable}
+      className="flex-row items-center  px-5 py-2 w-full my-1.5"
     >
-      <Icon color={` ${danger ? "#F21E6A" : "#505050"}`} size={20} />
+      <Icon color={`${danger ? "#F21E6A" : "#505050"} ${disable ? "opacity-50" : ''}`} size={30} />
       <Text
-        className={`mr-1.5`}
-        style={{ color: danger ? "text-[#F21E6A]" : "" }}
+        h3
+        className={`ml-3.5 capitalize text-center  ${disable ? "opacity-50" : ''}`}
+        style={{ color: danger ? "#F21E6A" : "" }}
       >
         {type}
       </Text>

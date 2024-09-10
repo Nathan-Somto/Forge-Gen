@@ -19,6 +19,7 @@ type Props = {
   open?: boolean;
   height?: number;
   sheetContentStyles?: StyleProp<ViewStyle>;
+  disable?:boolean;
 };
 export default function Sheet({
   title,
@@ -27,6 +28,7 @@ export default function Sheet({
   height = 0.3,
   children,
   sheetContentStyles,
+  disable
 }: Props) {
   const deviceHeight = Dimensions.get("window").height;
   const sheetRef = React.useRef<View | null>(null);
@@ -38,6 +40,7 @@ export default function Sheet({
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (_, gestureState) => {
+        if(disable) return;
         const newHeight = height * deviceHeight - gestureState.dy;
         console.log("heights: ", newHeight, deviceHeight * height);
         console.log("gestureState.dy: ", gestureState.dy);
@@ -54,6 +57,7 @@ export default function Sheet({
         }
       },
       onPanResponderRelease: (_, gestureState) => {
+        if(disable) return;
         const finalHeight = currentHeight - gestureState.dy;
         setCurrentHeight(finalHeight);
 
@@ -73,6 +77,7 @@ export default function Sheet({
     <Modal transparent visible={open} animationType="fade">
       <TouchableOpacity
         onPress={onClose}
+        disabled={disable}
         style={{
           backgroundColor: "rgba(0,0,0,0.5)",
           flex: 1,
@@ -99,6 +104,7 @@ export default function Sheet({
           <TouchableOpacity
             style={{ position: "absolute", top: 10, right: 10 }}
             onPress={onClose}
+            disabled={disable}
           >
             <Feather name="x" size={20} color={Colors.secondary} />
           </TouchableOpacity>

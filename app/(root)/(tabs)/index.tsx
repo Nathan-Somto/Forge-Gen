@@ -46,7 +46,6 @@ export default function HomeScreen() {
     // Handle filtered data
     setTransData(filteredData);
   };
-  console.log("transData: ", transData);
   const handleTransformFilter = (text: string, index: number) => {
     if (text === "All") {
       // Handle resetting to all data
@@ -62,7 +61,6 @@ export default function HomeScreen() {
     TabsRef.current?.scrollToIndex({ index, animated: true });
     setTransData(filteredData);
   };
-
   return (
     <PrimaryBackground>
       <TouchableWithoutFeedback

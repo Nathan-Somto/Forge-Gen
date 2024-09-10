@@ -10,14 +10,14 @@ import {
   ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import WelcomeImg from "@/assets/images/welcome-img.png";
 import { router, Redirect } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
-import colors from "@/constants/Colors";
 import { Button } from "@/components/ui/Button";
 import GradientButton from "@/components/GradientButton";
 import GradientHeading from "@/components/GradientHeading";
+import { useAssets } from "expo-asset";
 export default function index() {
+  const [assets] = useAssets([require("@/assets/images/white-logo.png"), require('@/assets/images/welcome-img.png')]);
+  console.log("assets", assets);
   const {
     auth: { user, checking },
   } = useAuth();
@@ -44,15 +44,17 @@ export default function index() {
                 </View>
               </View>
               <View className="relative ">
+                {assets && (
                 <ImageBackground
-                  source={WelcomeImg}
+                  source={{uri: assets[1].uri}}
                   className="object-[center_left] object-cover mx-auto max-w-[400px] w-full  h-[300px] justify-center items-center"
                 >
                   <Image
-                    source={require("@/assets/images/white-logo.png")}
+                    source={{uri: assets[0].uri}}
                     className="h-[100px] w-[100px]"
                   />
                 </ImageBackground>
+                )}
               </View>
               <View className="flex-row  h-[100px] items-center justify-around px-2 w-full">
                 <View className="w-[45%]">

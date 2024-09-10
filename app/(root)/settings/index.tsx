@@ -17,7 +17,10 @@ import { SettingsLinks } from "@/constants/Values";
 import RateUsModal from "@/components/RateUsModal";
 import { useAuth } from "@/hooks/useAuth";
 import { logout as deleteSession } from "@/lib/appwrite";
+import { useAssets } from "expo-asset";
+
 export default function Settings() {
+  const [assets, error] = useAssets(require("@/assets/images/settings/blue-banner.png"));
   const [disabled, setDisabled] = React.useState(false);
   const { logout } = useAuth();
   const [showModal, setShowModal] = React.useState(false);
@@ -63,7 +66,7 @@ export default function Settings() {
       <SafeAreaView>
         <View className="h-[300px] relative w-full overflow-hidden rounded-b-xl">
           <ImageBackground
-            source={require("@/assets/images/settings/blue-banner.png")}
+            source={{uri: assets ? assets[0]?.uri : ""}}
             className="h-full w-full justify-center items-center"
             resizeMode="cover"
           >
