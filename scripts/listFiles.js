@@ -10,7 +10,7 @@ function getAllFiles(dirPath, arrayOfFiles = []) {
     if (fs.statSync(fullPath).isDirectory()) {
       getAllFiles(fullPath, arrayOfFiles);
     } else {
-      arrayOfFiles.push(fullPath);
+      arrayOfFiles.push(fullPath.replace(/../, '.'));
     }
   });
 
