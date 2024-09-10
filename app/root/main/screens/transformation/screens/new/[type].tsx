@@ -3,14 +3,15 @@ import React from "react";
 import PrimaryBackground from "@/components/PrimaryBackground";
 import { Text } from "@/components/ui/Text";
 import TransformationForm from "@/components/TransformationForm";
-import { useLocalSearchParams } from "expo-router";
-export default function NewTransformation() {
-  const { type } = useLocalSearchParams<{ type: string }>();
+import { StackScreenProps } from "@react-navigation/stack";
+import { TransformationStackParamList } from "../../stack";
+export default function NewTransformationScreen({route}: StackScreenProps<TransformationStackParamList, 'NewTransformation'>) {
+  const { type } = route.params;
   return (
     <PrimaryBackground>
       <ScrollView className="px-5 flex-1">
         <TransformationForm
-          type={type as TransformationTypeKey}
+          type={type}
         />
       </ScrollView>
     </PrimaryBackground>

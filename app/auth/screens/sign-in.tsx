@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import React from "react";
 import FormField from "@/components/FormField";
-import { Link, router } from "expo-router";
 import GradientButton from "@/components/GradientButton";
 import PrimaryBackground from "@/components/PrimaryBackground";
 import GradientHeading from "@/components/GradientHeading";
@@ -16,7 +15,9 @@ import { GoogleButton } from "@/components/GoogleButton";
 import { Text } from "@/components/ui/Text";
 import { getCurrentUser, signIn } from "@/lib/appwrite";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigation } from "@react-navigation/native";
 export default function SignIn() {
+  const router = useNavigation();
   const {login} = useAuth();
   const [submitting, setSubmitting] = React.useState(false);
   const [data, setData] = React.useState({
@@ -32,7 +33,12 @@ export default function SignIn() {
       await signIn(data.email, data.password);
       const user = await getCurrentUser();
       login(user);
-      router.replace("/(root)/(tabs)/");
+      router.navigate('Root', {
+        screen: "MainTabs",
+        params: {
+          screen: "Home",
+        },
+      })
     }
     catch(err){
       Alert.alert("Error Occured", (err as Error).message)
@@ -65,13 +71,12 @@ export default function SignIn() {
             />
             <View className="w-full">
               <View>
-                <Link
-                  href="/(auth)/sign-in"
+                <Text
                   style={{ color: Colors.neutral }}
                   className="text-lg mt-3 mb-5 font-medium"
                 >
                   Forgot Password?
-                </Link>
+                </Text>
               </View>
               <GradientButton
                 onPress={handleSubmit}

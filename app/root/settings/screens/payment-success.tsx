@@ -2,20 +2,19 @@ import React, { useRef, useEffect } from "react";
 import { View, Animated, Easing } from "react-native";
 import PrimaryBackground from "@/components/PrimaryBackground";
 import { Text } from "@/components/ui/Text";
-import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "@/components/ui/Button";
+import { StackScreenProps } from "@react-navigation/stack";
+import { SettingsStackParamList } from "../stack";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Success() {
-  const { tx_ref, amount, plan } = useLocalSearchParams<{
-    tx_ref: string;
-    amount: string;
-    plan: string;
-  }>();
-
+export default function PaymentSuccessScreen({
+  route,
+}: StackScreenProps<SettingsStackParamList, "PaymentSuccess">) {
+  const { tx_ref, amount, plan } = route.params;
   const checkmarkScale = useRef(new Animated.Value(0)).current;
   const checkmarkRotation = useRef(new Animated.Value(0)).current;
   const detailsOpacity = useRef(new Animated.Value(0)).current;
-
+  const router = useNavigation();
   useEffect(() => {
     // check mark scale animation
     Animated.spring(checkmarkScale, {
@@ -77,7 +76,12 @@ export default function Success() {
         </Animated.View>
 
         <Button
-          onPress={() => router.replace("/(root)/(tabs)/")}
+          onPress={() =>
+            router.navigate("Root", {
+              screen: "MainTabs",
+              params: { screen: "Home" },
+            })
+          }
           containerStyles={[
             {
               width: "100%",

@@ -5,7 +5,7 @@ import { Text } from "../ui/Text";
 import GradientButton from "../GradientButton";
 import { router } from "expo-router";
 import { Button } from "../ui/Button";
-import StackedCoins from "@/assets/images/stacked-coins.png";
+import StackedCoins from "@/assets/images/stackedcoins.png";
 import Colors from "@/constants/Colors";
 type Props = {
   showSheet: boolean;

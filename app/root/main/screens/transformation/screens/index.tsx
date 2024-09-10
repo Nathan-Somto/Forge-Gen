@@ -3,13 +3,13 @@ import React from "react";
 import { transformationLinks } from "@/constants/Values";
 import GradientHeading from "@/components/GradientHeading";
 import PrimaryBackground from "@/components/PrimaryBackground";
-import { router } from "expo-router";
+
 import Colors from "@/constants/Colors";
 import { Text } from "@/components/ui/Text";
 import InsufficientCreditsSheet from "@/components/InsufficientCoinsSheet";
 import { useAuth } from "@/hooks/useAuth";
 
-export default function transformation() {
+export default function  TransformationHomeScreen() {
   const [showSheet, setShowSheet] = React.useState(false);
   const {auth: {user}} = useAuth()
   const creditBalance = user?.creditBalance || 0
@@ -18,7 +18,7 @@ export default function transformation() {
       setShowSheet(true);
       return;
     }
-    router.push(`/(root)/transformation/new/${type}`);
+    /* push(`/(root)/transformation/new/${type}`); */
   };
   const handleClose = () => {
     setShowSheet(false);

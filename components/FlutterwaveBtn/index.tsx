@@ -6,7 +6,7 @@ import { FlutterwaveInitOptions } from "flutterwave-react-native/dist/Flutterwav
 import { RedirectParams } from "flutterwave-react-native/dist/PayWithFlutterwave";
 import { Alert } from "react-native";
 import { createTransaction, updateUser } from "@/lib/appwrite";
-import { router } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 type Props = {
   price: number;
   plan: Omit<Plans, "Free">;
@@ -16,6 +16,7 @@ const generate_tx_ref = () => {
   return Math.random().toString(36).substring(7);
 };
 export function FlutterwaveBtn({ price, plan, toggleLoader }: Props) {
+  const router = useNavigation();
   const {
     auth: { user },
     updateUserInfo,
@@ -63,24 +64,31 @@ export function FlutterwaveBtn({ price, plan, toggleLoader }: Props) {
           amount: price,
           buyer: user.$id,
           plan,
-          createdAt: new Date(),
+          created_at: new Date(),
           credits: plan === "Premium" ? 1000 : 100,
           downloads: plan === "Premium" ? 5000 : 50,
           flwId: data.transaction_id ?? "no id",
           tx_ref: data.tx_ref,
         });
         // redirect to success screen
-        router.replace(
-          `/(root)/success/${data.tx_ref}?plan=${plan}&amount=${price}`
-        );
+        router.navigate("Root", {
+          screen: "Settings",
+          params: {
+            screen: "PaymentSuccess",
+            params: {
+              amount: price,
+              plan,
+              tx_ref: data.tx_ref,
+            },
+          },
+        });
       } else {
         Alert.alert("Payment Failed", "Your payment was not successful");
       }
     } catch (err) {
       console.log("handleRedirect error: ", err);
       Alert.alert("Error", "An error occurred. Please try again");
-    }
-    finally{
+    } finally {
       toggleLoader();
     }
   };

@@ -1,37 +1,32 @@
 import 'react-native-url-polyfill/auto'
+import 'react-native-gesture-handler';
+import "react-native-reanimated";
 import { Fonts } from "@/constants/Typo";
 import { AuthProvider } from "@/context/AuthProvider";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import "react-native-reanimated";
+import { View } from 'react-native';
+import { Text } from '@/components/ui/Text';
+import AppStack from './app/root/settings/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import {ErrorBoundary, FallbackProps} from 'react-error-boundary';
+import { Button } from './components/ui/Button';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
- /*  const [loaded, error] = useFonts({
+  const [loaded, error] = useFonts({
     [Fonts.Semibold]: require("@/assets/fonts/Poppins-SemiBold.ttf"),
     [Fonts.Regular]: require("@/assets/fonts/Poppins-Regular.ttf"),
     [Fonts.Medium]: require("@/assets/fonts/Poppins-Medium.ttf"),
     ...FontAwesome.font,
-  }); */
+  }); 
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
- /*  useEffect(() => {
+ useEffect(() => {
     if (error) throw error;
   }, [error]);
 
@@ -46,20 +41,28 @@ export default function RootLayout() {
 
   if (!loaded) {
     return null;
-  } */
-
-  return <RootLayoutNav />;
+  }
+  return <View><Text>Hello World</Text></View>
+  //return <RootLayoutNav />;
 }
-
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  return (
+    <View>
+      <Text>Something went wrong</Text>
+      <Text>{error.message}</Text>
+      <Button onPress={resetErrorBoundary}>Try again</Button>
+    </View>
+  )
+}
 function RootLayoutNav() {
   return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
     <AuthProvider>
+      <NavigationContainer>
       <StatusBar style="light" />
-      <Stack>
-        <Stack.Screen name="index"  options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(root)" options={{ headerShown: false }} />
-      </Stack>
+      <AppStack/>
+      </NavigationContainer>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }

@@ -28,7 +28,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-font",
         {
@@ -71,9 +70,6 @@
       "eas": {
         "projectId": "09ded067-3340-4c35-ad0c-e2b7c76a96ff"
       }
-    },
-    "experiments": {
-      "tsconfigpaths": true
     }
   }
 }

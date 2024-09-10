@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getUserTransactions, TransactionData } from "@/lib/appwrite";
 import { ActivityIndicator, View, FlatList } from "react-native";
 import Colors from "@/constants/Colors";
-export default function PaymentHistory() {
+export default function PaymentHistoryScreen() {
   const { user } = useAuth((state) => state.auth);
   const userId = user?.$id ?? "";
   const [loading, setLoading] = React.useState(false);

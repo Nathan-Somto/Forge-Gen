@@ -27,13 +27,14 @@ import {
 import { createUserTransformation, updateCredits } from "@/lib/appwrite";
 import { useAuth } from "@/hooks/useAuth";
 import { useTransformation } from "@/hooks/useTransformation";
-import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCache } from "@/hooks/useCache";
+import { useNavigation } from "@react-navigation/native";
 
 export default function TransformationForm({
   type,
 }: TransformationFormProps) {
+  const router = useNavigation();
   const {auth: {user}} = useAuth();
   const {setCache, getCache} = useCache();
   const userId = user?.$id ?? '';
@@ -164,10 +165,22 @@ export default function TransformationForm({
         setCache('transformations', [savedData, ...(getCache('transformations') ?? [])]);
         // set the new transformation as the current and navigate to the transformation page
         setCurrent(savedData);
-        router.replace({
-          pathname: "/(root)/(tabs)/transformation/[id]",
-          params: { id: savedData.public_id },
-        });
+        router.navigate(
+          "Root",
+          {
+            screen: "MainTabs",
+            params: {
+              screen: "Transformation",
+              params: {
+                screen: "TransformationDetail",
+                params: {
+                  id: savedData.$id,
+                },
+              },
+            },
+
+          }
+        );
       } else {
         Alert.alert("Error", "Please upload an image.");
       }

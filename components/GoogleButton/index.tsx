@@ -1,12 +1,11 @@
-import { router } from "expo-router";
 import { Button } from "../ui/Button";
 import Svg, { Path } from "react-native-svg";
 import { Text} from "../ui/Text"; // Import View from your UI components
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 
 export function GoogleButton() {
   const handleGoogleLogin = () => {
-    router.push("/(root)/(tabs)/");
+    Alert.alert("Google Oauth is not supported")
   };
 
   return (

@@ -2,7 +2,6 @@ import { View, Image, TouchableOpacity, Linking, Alert } from "react-native";
 import React from "react";
 import { FontAwesome, Feather, Entypo } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import {  router } from "expo-router";
 import { iconBtns, transformationLinks } from "@/constants/Values";
 import { BtmSheetBtn } from "./BtmSheetBtn";
 import { Text } from "../ui/Text";
@@ -13,6 +12,7 @@ import Sheet from "../ui/Sheet";
 import { useCache } from "@/hooks/useCache";
 import { likeTransformation } from "@/lib/appwrite";
 import { useDownloadImage } from "@/hooks/useDownloadImage";
+import { useNavigation } from "@react-navigation/native";
 export type ImageCardProps = ITransformation;
 
 export default function ImageCard({
@@ -31,6 +31,7 @@ export default function ImageCard({
   const {
     auth: { user },
   } = useAuth();
+  const router = useNavigation();
   const {setCache, getCache}= useCache();
   const { setCurrent } = useTransformation();
   const userId = user?.$id ?? "";
@@ -144,7 +145,18 @@ export default function ImageCard({
       downloads,
       $id
     });
-    router.push(`/(root)/(tabs)/transformation/${public_id}`);
+    router.navigate("Root", {
+      screen: "MainTabs",
+      params: {
+        screen: "Transformation",
+        params: {
+          screen: "TransformationDetail",
+          params: {
+            id: $id,
+          },
+        },
+      },
+    });
   };
   return (
     <>

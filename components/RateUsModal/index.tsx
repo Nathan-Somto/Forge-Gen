@@ -19,7 +19,7 @@ export default function RateUsModal({
           <Dialog.cancel onOpenChange={openModal} />
           <Image
             className="h-[200px] w-full object-center"
-            source={require("@/assets/images/rate-us/star-illustration.png")}
+            source={require("@/assets/images/rateUs/starillustration.png")}
             resizeMode="contain"
           />
           <Text h1 style={{ color: Colors.btnPrimary }} className="text-center">
@@ -30,7 +30,7 @@ export default function RateUsModal({
           </Text>
           <View>
             <Image
-              source={require("@/assets/images/rate-us/stars.png")}
+              source={require("@/assets/images/rateUs/stars.png")}
               className="w-full h-[100px] object-center"
             />
           </View>

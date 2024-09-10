@@ -7,7 +7,6 @@ import {
   Alert,
 } from "react-native";
 import React from "react";
-import { Link, router } from "expo-router";
 import PrimaryBackground from "@/components/PrimaryBackground";
 import GradientHeading from "@/components/GradientHeading";
 import FormField from "@/components/FormField";
@@ -17,7 +16,9 @@ import { Text } from "@/components/ui/Text";
 import { GoogleButton } from "@/components/GoogleButton";
 import { useAuth } from "@/hooks/useAuth";
 import { signUp } from "@/lib/appwrite";
+import { useNavigation } from "@react-navigation/native";
 export default function SignUp() {
+  const router = useNavigation();
   const { login } = useAuth();
   const [submitting, setSubmitting] = React.useState(false);
   const [data, setData] = React.useState({
@@ -35,7 +36,12 @@ export default function SignUp() {
     try {
       const user = await signUp(data.username, data.email, data.password);
       login(user);
-      router.replace('/(root)/(tabs)/')
+      router.navigate('Root', {
+        screen: "MainTabs",
+        params: {
+          screen: "Home",
+        },
+      })
     } catch (err) {
       Alert.alert("Error Occured", (err as Error).message)
     } finally {
@@ -80,12 +86,12 @@ export default function SignUp() {
                       {" "}
                       Have an Account Already{" "}
                     </Text>
-                    <Link
-                      href="/(auth)/sign-in"
-                      style={{ color: Colors.neutral }}
+                    <TouchableWithoutFeedback
+                     
+                      onPress={() => router.navigate("Auth", { screen: "SignIn" })}
                     >
                       <Text style={{ color: Colors.labelText }}>Login?</Text>
-                    </Link>
+                    </TouchableWithoutFeedback>
                   </View>
                 </View>
                 <GradientButton

@@ -6,19 +6,18 @@ import PrimaryBackground from "@/components/PrimaryBackground";
 import GradientButton from "@/components/GradientButton";
 import { Button } from "@/components/ui/Button";
 import { useTransformation } from "@/hooks/useTransformation";
-import { router } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useDownloadImage } from "@/hooks/useDownloadImage";
 import { useAuth } from "@/hooks/useAuth";
 import InsufficientCreditsSheet from "@/components/InsufficientCoinsSheet";
-export default function Transformation() {
+export default function TransformationScreen() {
   const [showSheet, setShowSheet] = React.useState(false);
   const { current } = useTransformation();
   const { user } = useAuth((state) => state.auth);
 
   React.useEffect(() => {
     if (current === null) {
-      router.back();
+      
     }
   }, [current]);
   const downloadsLeft = user?.downloadsLeft || 0;

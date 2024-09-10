@@ -12,7 +12,6 @@ import PrimaryBackground from "@/components/PrimaryBackground";
 import { Text } from "@/components/ui/Text";
 import { Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { router } from "expo-router";
 import { SettingsLinks } from "@/constants/Values";
 import RateUsModal from "@/components/RateUsModal";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,7 +19,7 @@ import { logout as deleteSession } from "@/lib/appwrite";
 import { useAssets } from "expo-asset";
 
 export default function Settings() {
-  const [assets, error] = useAssets(require("@/assets/images/settings/blue-banner.png"));
+  const [assets, error] = useAssets(require("@/assets/images/settings/bluebanner.png"));
   const [disabled, setDisabled] = React.useState(false);
   const { logout } = useAuth();
   const [showModal, setShowModal] = React.useState(false);
@@ -32,7 +31,7 @@ export default function Settings() {
     try {
       await deleteSession();
       logout();
-      router.replace("/(auth)/sign-in");
+      /* router.replace("/(auth)/sign-in"); */
     } catch (err) {
       Alert.alert("Error Occured", (err as Error).message);
     } finally {
@@ -45,13 +44,13 @@ export default function Settings() {
         openModal(true);
         return;
       case 2:
-        router.push("/(root)/settings/about");
+       /*  router.push("/(root)/settings/about"); */
         return;
       case 3:
-        router.push("/(root)/settings/payment-history");
+       /*  router.push("/(root)/settings/payment-history"); */
         return;
       case 4:
-        router.push("/(root)/settings/buy-credits");
+        /* router.push("/(root)/settings/buy-credits"); */
         return;
       case 5:
         await signOut();
@@ -71,7 +70,7 @@ export default function Settings() {
             resizeMode="cover"
           >
             <View className="flex-row h-20 items-center px-5 justify-between w-full absolute top-0 left-0">
-              <TouchableOpacity onPress={() => router.back()} className="mr-3">
+              <TouchableOpacity onPress={() => /* router.back() */ ''} className="mr-3">
                 <Feather name="arrow-left" size={25} color={Colors.text} />
               </TouchableOpacity>
               <Text className="flex-[0.7]" h3>
