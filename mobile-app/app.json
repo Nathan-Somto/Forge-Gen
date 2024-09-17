@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "forge-gen",
+    "slug": "forge-gen",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#03143E"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nathansomto.forgegen"
+    },
+    "android": {
+      "package": "com.nathansomto.forgegen"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Poppins-Medium.ttf",
+            "./assets/fonts/Poppins-Regular.ttf",
+            "./assets/fonts/Poppins-SemiBold.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/images/about/info.png",
+            "./assets/images/adaptiveicon.png",
+            "./assets/images/favicon.png",
+            "./assets/images/icon.png",
+            "./assets/images/profile/coins.png",
+            "./assets/images/profile/transformations.png",
+            "./assets/images/rateUs/starillustration.png",
+            "./assets/images/rateUs/stars.png",
+            "./assets/images/settings/bluebanner.png",
+            "./assets/images/settings/gear.png",
+            "./assets/images/splash.png",
+            "./assets/images/stackedcoins.png",
+            "./assets/images/welcomeimg.png",
+            "./assets/images/whitelogo.png"
+          ]
+        }
+      ]
+    ],
+    "developmentClient": {
+      "silentLaunch": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "09ded067-3340-4c35-ad0c-e2b7c76a96ff"
+      }
+    }
+  }
+}

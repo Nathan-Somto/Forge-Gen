@@ -1,0 +1,24 @@
+{
+    "projectId": "66c9cc090037c27007db",
+    "functions": [
+        {
+            "$id": "66e93e980028b1fdbe47",
+            "name": "transformation_url_gen",
+            "runtime": "node-18.0",
+            "execute": [
+                "any"
+            ],
+            "events": [],
+            "scopes": [
+                "users.read"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "path": "functions/transformation_url_gen"
+        }
+    ]
+}
