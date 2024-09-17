@@ -47,18 +47,18 @@ This Folder Structure was derived due to the neccessity of colocating navigation
 ```bash
   app/
   │ (only one allowed at root )
-  ├── stack.tsx // Stack navigation logic
-  ├── drawer.tsx // Drawer navigation logic
-  ├── tabs.tsx // Tab navigation logic
+  ├── stack.tsx # Stack navigation logic
+  ├── drawer.tsx # Drawer navigation logic
+  ├── tabs.tsx # Tab navigation logic
   │
-  ├── screens/ // Folder containing all screen files and folders
-  │ ├── Home.tsx // A screen represented as a file
-  │ ├── Profile/ // A screen represented as a folder
-  │ │ ├── stack.tsx // Stack navigation for Profile section (only one allowed at root)
+  ├── screens/ # Folder containing all screen files and folders
+  │ ├── Home.tsx # A screen represented as a file
+  │ ├── Profile/ # A screen represented as a folder
+  │ │ ├── stack.tsx # Stack navigation for Profile section (only one allowed at root)
   │ │ └── screens/
-  │      ├── [id].tsx // Dynamic screen for Profile section (e.g., User ID)
-  │      ├── Edit.tsx // Static screen for Profile editing
-  │ └── Settings.tsx // Another screen as a file
+  │      ├── [id].tsx # Dynamic screen for Profile section (e.g., User ID)
+  │      ├── Edit.tsx # Static screen for Profile editing
+  │ └── Settings.tsx # Another screen as a file
 ```
 
 ## Key Rules
@@ -86,10 +86,10 @@ This Folder Structure was derived due to the neccessity of colocating navigation
 
 ```bash
 Profile/
-├── stack.tsx        // Stack navigation at the root
+├── stack.tsx        # Stack navigation at the root
 └── screens/
-    ├── [id].tsx     // Dynamic screen for profile based on user ID
-    └── Edit.tsx     // Static screen for editing profile
+    ├── [id].tsx     # Dynamic screen for profile based on user ID
+    └── Edit.tsx     # Static screen for editing profile
 ```
 
 ## 📦 Installation
