@@ -52,22 +52,22 @@ export interface UploadBase64Response {
     message: string;
 }
 const uploadBase64Image = async (base64Image: string): Promise<UploadBase64Response> => {
-  const execution = await functions.createExecution(
+    const result = await functions.createExecution(
     appwriteConfig.cldfunctionId,
     JSON.stringify({ base64Image }),
-    true,
+    false,
     "/upload",
     ExecutionMethod.POST
   );
-  console.log("the response body: ", execution.responseBody);
-  const data = JSON.parse(execution.responseBody);
+  console.log("execution result: in create", result);
+  const data = JSON.parse(result.responseBody);
   return data;
 };
  const genRemove = async (publicId: string, options: RemoveOptions): Promise<TransformationResponse> => {
     const execution = await functions.createExecution(
         appwriteConfig.cldfunctionId,
         JSON.stringify({ publicId, ...options }),
-        true,
+        false,
         "/transformation_url_gen/remove",
         ExecutionMethod.POST
     );
@@ -78,7 +78,7 @@ const uploadBase64Image = async (base64Image: string): Promise<UploadBase64Respo
     const execution = await functions.createExecution(
         appwriteConfig.cldfunctionId,
         JSON.stringify({ publicId, ...options }),
-        true,
+        false,
         "/transformation_url_gen/restore",
         ExecutionMethod.POST
     );
@@ -89,7 +89,7 @@ const uploadBase64Image = async (base64Image: string): Promise<UploadBase64Respo
     const execution = await functions.createExecution(
         appwriteConfig.cldfunctionId,
         JSON.stringify({ publicId, ...options }),
-        true,
+        false,
         "/transformation_url_gen/fill",
         ExecutionMethod.POST
     );
@@ -100,7 +100,7 @@ const recolor = async (publicId: string, options: RecolorOptions): Promise<Trans
     const execution = await functions.createExecution(
         appwriteConfig.cldfunctionId,
         JSON.stringify({ publicId, ...options }),
-        true,
+        false,
         "/transformation_url_gen/recolor",
         ExecutionMethod.POST
     );
@@ -111,7 +111,7 @@ const bgRemove = async (publicId: string, options: Options): Promise<Transformat
     const execution = await functions.createExecution(
         appwriteConfig.cldfunctionId,
         JSON.stringify({ publicId, ...options }),
-        true,
+        false,
         "/transformation_url_gen/removeBackground",
         ExecutionMethod.POST
     );
