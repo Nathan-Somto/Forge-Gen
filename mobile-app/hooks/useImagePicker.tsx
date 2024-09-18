@@ -10,6 +10,7 @@ import { AppwriteFile } from "@/lib/appwrite";
 export function useImagePicker({ optionTitle, sizeLimit }: { optionTitle: string, sizeLimit?:number }) {
   const [url, setUrl] = React.useState<string | null>(null);
   const [base64, setBase64] = React.useState<string | null>(null);
+  const [mimeType, setMimeType] = React.useState<string | null>(null);
   const [displayOptions, setDisplayOptions] = React.useState<boolean>(false);
   const [appwriteFile, setAppwriteFile] = React.useState<AppwriteFile | null>(null);
   const isTooLarge = (fileSize: number | undefined ) => {
@@ -38,6 +39,7 @@ export function useImagePicker({ optionTitle, sizeLimit }: { optionTitle: string
       }
       setAppwriteFile(file);
       setUrl(asset.uri);
+      setMimeType(asset.mimeType ?? 'image/jpeg');
       setBase64(asset.base64 ?? null);
     }
     setDisplayOptions(false);
@@ -123,5 +125,5 @@ export function useImagePicker({ optionTitle, sizeLimit }: { optionTitle: string
     );
   };
 
-  return { url, Options, handlePress, base64, appwriteFile };
+  return { url, Options, handlePress, base64, appwriteFile, mimeType };
 }
