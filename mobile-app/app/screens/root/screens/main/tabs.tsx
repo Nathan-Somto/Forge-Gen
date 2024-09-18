@@ -58,8 +58,7 @@ export default function MainTabs() {
           fontSize: 22,
         },
         headerTitleAlign: "center",
-        headerRight: () =>
-          route.name === "Home" && (
+        headerRight: () =>         
             <TouchableOpacity
               onPress={() =>
                 router.navigate("Root", {
@@ -72,8 +71,7 @@ export default function MainTabs() {
               className="mr-3 "
             >
               <FontAwesome name="gear" size={25} color={Colors.text} />
-            </TouchableOpacity>
-          ),
+            </TouchableOpacity>      
       })}
     >
       <Tab.Screen
