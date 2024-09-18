@@ -18,7 +18,6 @@ const router = useNavigation();
     require("@/assets/images/whitelogo.png"),
     require("@/assets/images/welcomeimg.png"),
   ]);
-  console.log("assets", assets);
 
  
     return (
