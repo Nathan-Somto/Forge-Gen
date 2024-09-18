@@ -17,21 +17,22 @@ An AI-powered mobile SaaS application built on top of Cloudinary's image transfo
 - **Expo Router**
 
 ## ScreenShots
-<div style="display: flex; flex-direction: 'row';">
+<div style="display: flex; flex-direction: 'row'; flex-wrap: wrap; justify-content: center; gap: 6px">
 <img src="./screenshots/welcome.png" width=30%>
+<img src="./screenshots/login.png" width=30%>
 <img src="./screenshots/home.png" width=30%>
 <img src="./screenshots/transformation.png" width=30%>
 <img src="./screenshots/newtransformation.png" width=30%>
 <img src="./screenshots/profile.png" width=30%>
 <img src="./screenshots/settings.png" width=30%>
-
+<img src="./screenshots/transforming.png" width=30%>
 </div>
 
 ## ✨ Key Features
 
 - **Image Transformations**: Perform operations like background removal, image restoration, and object recoloring with ease.
 - **Authentication**: Secure user login and registration.
-- **Payments**: Payment integration with stripe for credit purchases
+- **Payments**: Payment integration with flutterwave for credit purchases
 - **Credit Management**: Manage and track user credits for app services.
 
 ## 🎨 Design
