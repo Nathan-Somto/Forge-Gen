@@ -12,6 +12,7 @@ declare type TransformationLinks = {
 }[];
 declare type TransformationFormProps = {
   type: TransformationTypeKey;
+  setIsGenerating: (val: boolean) => void;
 };
 declare type TransformationFormInfo = {
   [i in TransformationTypeKey]: {
