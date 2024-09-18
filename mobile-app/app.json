@@ -54,7 +54,8 @@
             "./assets/images/splash.png",
             "./assets/images/stackedcoins.png",
             "./assets/images/welcomeimg.png",
-            "./assets/images/whitelogo.png"
+            "./assets/images/whitelogo.png",
+            "./assets/images/generating.gif"
           ]
         }
       ]

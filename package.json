@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "get:packages": "cd mobile-app && npm install && cd ../cloudinary-server/functions/transformation_url_gen && npm install",
-    "deploy:functions": "cd cloudinary-server && appwrite deploy",
-    "deploy:app": "cd mobile-app && eas build --profile preview --platform android"
+    "deploy:functions": "cd cloudinary-server/functions && appwrite push functions",
+    "deploy:app": "cd mobile-app && eas build -p android --profile preview"
   },
   "keywords": [],
   "author": "",

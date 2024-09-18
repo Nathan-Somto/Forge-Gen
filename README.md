@@ -1,11 +1,16 @@
 # 🚀 Forge Gen
-
 An AI-powered mobile SaaS application built on top of Cloudinary's image transformation APIs, inspired by JS Mastery's Imaginify.
+
+![](https://img.shields.io/github/issues/nathan-somto/forge-gen?style=for-the-badge)
+![](https://img.shields.io/badge/Maintained-Yes-lemon?style=for-the-badge)
+![](https://img.shields.io/github/forks/nathan-somto/forge-gen?style=for-the-badge)
+![](https://img.shields.io/github/stars/nathan-somto/forge-gen?style=for-the-badge)
 
 ## 📲 Download App
 
-**Note:** The app is only available on Android.
+[Click To Download APK](https://expo.dev/accounts/nathansomto/projects/forge-gen/builds/bd22832f-9039-48d6-815d-c3ad16413d54)
 
+**Note:** The app is only available on Android
 ## 🛠️ Tech Stack
 
 - **TypeScript**
