@@ -28,18 +28,18 @@ type TransformOptions = {
   width: number;
 };
 
-export default function TransformationForm({
-  type,
-}: TransformationFormProps) {
+export default function TransformationForm({ type, setIsGenerating }: TransformationFormProps) {
   const router = useNavigation();
-  const {auth: {user}} = useAuth();
-  const {setCache, getCache} = useCache();
-  const userId = user?.$id ?? '';
+  const {
+    auth: { user },
+  } = useAuth();
+  const { setCache, getCache } = useCache();
+  const userId = user?.$id ?? "";
   const { updateUserInfo } = useAuth();
   const { setCurrent } = useTransformation();
-  const { base64, handlePress, url, Options } = useImagePicker({
+  const { base64, handlePress, url, Options, mimeType } = useImagePicker({
     optionTitle: "Upload Photo",
-    sizeLimit: 2 * 1024 * 1024 //2mb in bytes
+    sizeLimit: 2 * 1024 * 1024, //2mb in bytes
   });
   const [formInfo] = useState(transformationFormInfo[type]);
   const [data, setData] = useState<TransformationData>({
@@ -70,8 +70,6 @@ export default function TransformationForm({
     }));
   };
 
-
-
   const handleTransform = async (
     type: TransformationTypeKey,
     { public_id, height, width }: TransformOptions
@@ -82,7 +80,11 @@ export default function TransformationForm({
         response = await Cloudinary.bgRemove(public_id, { height, width });
         break;
       case "fill":
-        response = await Cloudinary.genFill(public_id, { height, width, ar: data.aspectRatio });
+        response = await Cloudinary.genFill(public_id, {
+          height,
+          width,
+          ar: data.aspectRatio,
+        });
         break;
       case "recolor":
         response = await Cloudinary.recolor(public_id, {
@@ -100,9 +102,9 @@ export default function TransformationForm({
         });
         break;
       case "restore":
-        response =await Cloudinary.genRestore(public_id, {
+        response = await Cloudinary.genRestore(public_id, {
           height,
-          width
+          width,
         });
         break;
       default:
@@ -112,16 +114,24 @@ export default function TransformationForm({
     return response?.transformedUrl ?? null;
   };
 
-   const handleSubmit = async () => {
-    if(!user || userId === '' || user?.creditBalance === 0)  return;
+  const handleSubmit = async () => {
+    if (!user || userId === "" || user?.creditBalance === 0) return;
+    setIsGenerating(true);
     try {
       setLoading(true);
-      const uploadedImage = await Cloudinary.uploadBase64Image(base64 ?? "");
+      const uploadedImage = await Cloudinary.uploadBase64Image(
+        `data:${mimeType ?? "image/jpeg"};base64,${base64}`
+      );
       console.log("uploadedImage: ", uploadedImage);
       if (uploadedImage) {
-        const {width, public_id, height, secure_url} = uploadedImage.image;
-        const transformedUrl = await handleTransform(type, {height, width, public_id});
-        if(transformedUrl === null) throw new Error("Failed to transform image");
+        const { width, public_id, height, secure_url } = uploadedImage.image;
+        const transformedUrl = await handleTransform(type, {
+          height,
+          width,
+          public_id,
+        });
+        if (transformedUrl === null)
+          throw new Error("Failed to transform image");
         const transformData: ITransformationData = {
           downloads: 0,
           height: height,
@@ -145,27 +155,26 @@ export default function TransformationForm({
         // deduct 1 credit
         const newBalance = await updateCredits(userId, 1, "dec");
         // update user credits in store
-        updateUserInfo({...user, creditBalance: newBalance });
+        updateUserInfo({ ...user, creditBalance: newBalance });
         // update cache
-        setCache('transformations', [savedData, ...(getCache('transformations') ?? [])]);
+        setCache("transformations", [
+          savedData,
+          ...(getCache("transformations") ?? []),
+        ]);
         // set the new transformation as the current and navigate to the transformation page
         setCurrent(savedData);
-        router.navigate(
-          "Root",
-          {
-            screen: "MainTabs",
+        router.navigate("Root", {
+          screen: "MainTabs",
+          params: {
+            screen: "Transformation",
             params: {
-              screen: "Transformation",
+              screen: "TransformationDetail",
               params: {
-                screen: "TransformationDetail",
-                params: {
-                  id: savedData.$id,
-                },
+                id: savedData.$id,
               },
             },
-
-          }
-        );
+          },
+        });
       } else {
         Alert.alert("Error", "Please upload an image.");
       }
@@ -174,11 +183,12 @@ export default function TransformationForm({
       Alert.alert("Error", "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+      setIsGenerating(false);
     }
-  }; 
+  };
 
   return (
-    <View className="flex-1 py-8 px-3">
+    <View className="flex-1 py-8">
       <View className="my-4 ">
         <GradientHeading>{formInfo.heading}</GradientHeading>
         <View className="mt-1.5" />
@@ -254,7 +264,7 @@ export default function TransformationForm({
         )}
       </View>
       <View className="mt-5" />
-      <GradientButton /* onPress={handleSubmit} */>
+      <GradientButton onPress={handleSubmit}>
         {loading ? <ActivityIndicator color="white" /> : "Transform"}
       </GradientButton>
       <Options />
