@@ -28,7 +28,6 @@ export const getTransformations = async (
     appwriteConfig.transCollectionId,
     query
   );
-  console.log("getTranformations: ",data);
   return {
     data: convertToTransResult(
       data.documents as unknown as TransformationData[]
